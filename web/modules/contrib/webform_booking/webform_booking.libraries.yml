@@ -1,0 +1,9 @@
+webform_booking:
+  version: 1.0
+  css:
+    theme:
+      css/webform_booking.css: {}
+  js:
+    js/webform_booking.js: {}
+  dependencies:
+    - core/once

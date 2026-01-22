@@ -1,0 +1,18 @@
+name: 'Juicebox Test Layout Builder'
+type: module
+description: 'Provides juicebox layout builder configuration for tests.'
+package: Testing
+core_version_requirement: '^10.3 || ^11'
+dependencies:
+  - drupal:media_library
+  - drupal:media
+  - drupal:path
+  - drupal:layout_builder
+  - drupal:node
+  - drupal:user
+  - juicebox:juicebox
+
+# Information added by Drupal.org packaging script on 2024-12-19
+version: '4.0.0-alpha2'
+project: 'juicebox'
+datestamp: 1734574881

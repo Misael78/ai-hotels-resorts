@@ -1,0 +1,13 @@
+name: 'Feedback AI'
+type: module
+description: 'Provides Analyzes sentiment of feedback submissions using the OpenAI API'
+core_version_requirement:  ^9 || ^10 || ^11
+package: Feedback AI
+dependencies:
+  - views_data_export:views_data_export
+configure: feedback_ai.feedback_api_settings
+
+# Information added by Drupal.org packaging script on 2024-10-17
+version: '1.0.4'
+project: 'feedback_ai'
+datestamp: 1729164804

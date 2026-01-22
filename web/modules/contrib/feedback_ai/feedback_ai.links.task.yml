@@ -1,0 +1,5 @@
+feedback_ai.form_tab:
+  route_name: feedback_ai.content
+  title: 'Feedback AI Form'
+  base_route: system.admin_content
+  weight: 100

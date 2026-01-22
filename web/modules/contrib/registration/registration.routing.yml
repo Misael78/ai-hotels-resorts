@@ -1,0 +1,19 @@
+registration.admin_settings:
+  path: '/admin/structure/registration-settings'
+  defaults:
+    _form: '\Drupal\registration\Form\RegistrationAdminForm'
+    _title: 'Registration settings'
+  requirements:
+    _permission: 'administer registration'
+
+registration.user_registrations:
+  path: '/user/{user}/registrations'
+  defaults:
+    _controller: '\Drupal\registration\Controller\RegistrationController::userRegistrations'
+    _title: 'Registrations'
+  requirements:
+    _user_registrations_access_check: 'TRUE'
+  options:
+    parameters:
+      user:
+        type: entity:user

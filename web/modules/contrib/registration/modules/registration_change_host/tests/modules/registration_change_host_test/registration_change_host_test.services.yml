@@ -1,0 +1,6 @@
+services:
+  registration_change_host_test.event_subscriber:
+    class: \Drupal\registration_change_host_test\EventSubscriber\RegistrationChangeHostTestSubscriber
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }

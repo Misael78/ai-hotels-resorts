@@ -1,0 +1,6 @@
+hotel_ai.settings:
+  title: 'Hotel AI Automations'
+  description: 'Configure AI automation for Rooms'
+  parent: system.admin_content
+  route_name: hotel_ai.settings
+  weight: 5

@@ -1,0 +1,7 @@
+name: ChatGPT Integration
+type: module
+description: 'Integra OpenAI ChatGPT con Drupal usando Key API.'
+core_version_requirement: ^11
+package: Custom
+dependencies:
+  - drupal:key

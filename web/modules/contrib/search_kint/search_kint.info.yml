@@ -1,0 +1,12 @@
+name: Search kint
+description: Allows searching through the Kint dump.
+package: Development
+type: module
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:devel
+
+# Information added by Drupal.org packaging script on 2025-07-07
+version: '2.0.0-beta2'
+project: 'search_kint'
+datestamp: 1751915009

@@ -1,0 +1,65 @@
+id: d7_registration_settings
+label: Registration settings
+audit: true
+migration_tags:
+  - Drupal 7
+  - Content
+source:
+  plugin: d7_registration_settings
+process:
+  entity_type_id:
+    plugin: host_entity_type
+    source: entity_type
+  entity_id:
+    plugin: host_entity_migration_lookup
+    source: entity_id
+  status: status
+  capacity: capacity
+  open:
+    plugin: format_date
+    from_format: 'Y-m-d H:i:s'
+    to_format: 'Y-m-d\TH:i:s'
+    to_timezone: UTC
+    source: open
+  close:
+    plugin: format_date
+    from_format: 'Y-m-d H:i:s'
+    to_format: 'Y-m-d\TH:i:s'
+    to_timezone: UTC
+    source: close
+  send_reminder: send_reminder
+  reminder_date:
+    plugin: format_date
+    from_format: 'Y-m-d H:i:s'
+    to_format: 'Y-m-d\TH:i:s'
+    to_timezone: UTC
+    source: reminder_date
+  reminder_template:
+    plugin: registration_reminder_template
+    source: reminder_template
+  maximum_spaces:
+    plugin: registration_additional_settings
+    source: settings
+    key: maximum_spaces
+  multiple_registrations:
+    plugin: registration_additional_settings
+    source: settings
+    key: multiple_registrations
+  from_address:
+    plugin: registration_additional_settings
+    source: settings
+    key: from_address
+  confirmation:
+    plugin: registration_additional_settings
+    source: settings
+    key: confirmation
+  confirmation_redirect:
+    plugin: registration_additional_settings
+    source: settings
+    key: confirmation_redirect
+destination:
+  plugin: entity:registration_settings
+migration_dependencies:
+  required: {  }
+  optional:
+    - d7_node_complete

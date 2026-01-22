@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Provides scheduled action support for registrations.
+ */
+
+/**
+ * Implements hook_cron().
+ *
+ * @see \Drupal\registration_scheduled_action\Cron\RegistrationSchedule
+ */
+function registration_scheduled_action_cron() {
+  \Drupal::service('registration_scheduled_action.cron.schedule')->run();
+}

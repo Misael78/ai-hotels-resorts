@@ -1,0 +1,79 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.juicebox_image_gallery.field_images
+    - node.type.juicebox_image_gallery
+  module:
+    - layout_builder
+    - layout_discovery
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+          context_mapping: {  }
+        components:
+          fddccae6-962b-42fe-b63c-ccb1a0ed17bb:
+            uuid: fddccae6-962b-42fe-b63c-ccb1a0ed17bb
+            region: content
+            configuration:
+              id: 'field_block:node:juicebox_image_gallery:field_images'
+              label: Images
+              label_display: '0'
+              provider: layout_builder
+              context_mapping:
+                entity: layout_builder.entity
+                view_mode: view_mode
+              formatter:
+                type: juicebox_formatter
+                label: hidden
+                settings:
+                  image_style: juicebox_medium
+                  thumb_style: juicebox_square_thumb
+                  caption_source: ''
+                  title_source: ''
+                  jlib_galleryWidth: 100%
+                  jlib_galleryHeight: 100%
+                  jlib_backgroundColor: '#222222'
+                  jlib_textColor: 'rgba(255,255,255,1)'
+                  jlib_thumbFrameColor: 'rgba(255,255,255,.5)'
+                  jlib_showOpenButton: false
+                  jlib_showExpandButton: false
+                  jlib_showThumbsButton: false
+                  jlib_useThumbDots: false
+                  jlib_useFullscreenExpand: '0'
+                  manual_config: ''
+                  custom_parent_classes: ''
+                  linkurl_source: ''
+                  linkurl_target: _blank
+                  incompatible_file_action: show_icon_and_link
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+        third_party_settings: {  }
+id: node.juicebox_image_gallery.default
+targetEntityType: node
+bundle: juicebox_image_gallery
+mode: default
+content:
+  field_images:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

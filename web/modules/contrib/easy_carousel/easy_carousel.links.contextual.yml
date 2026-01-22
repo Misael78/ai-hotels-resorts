@@ -1,0 +1,21 @@
+entity.carousel.edit_form:
+  route_name: entity.carousel.edit_form
+  group: carousel
+  title: 'Edit'
+
+entity.carousel.delete_form:
+  route_name: entity.carousel.delete_form
+  group: carousel
+  title: 'Delete'
+  weight: 10
+
+entity.carousel_item.edit_form:
+  route_name: entity.carousel_item.edit_form
+  group: carousel_item
+  title: 'Edit'
+
+entity.carousel_item.delete_form:
+  route_name: entity.carousel_item.delete_form
+  group: carousel_item
+  title: 'Delete'
+  weight: 10

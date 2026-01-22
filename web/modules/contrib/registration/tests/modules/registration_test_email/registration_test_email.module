@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Provides hooks for registration email tests.
+ */
+
+/**
+ * Implements hook_mail_alter().
+ */
+function registration_test_email_mail_alter(&$message) {
+  // Store the "From" header so assertions can be made against it later.
+  \Drupal::state()->set('registration_from', $message['headers']['From']);
+}

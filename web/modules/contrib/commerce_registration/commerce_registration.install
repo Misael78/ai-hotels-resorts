@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Provides install, uninstall and update hooks for commerce registration.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function commerce_registration_requirements($phase): array {
+  // Ensure there are no registration fields attached to product types before
+  // allowing the module to be enabled. This module requires that registration
+  // fields be added to product variation types instead.
+  $requirements = [];
+
+  if ($phase == 'install') {
+    $entity_type_id = 'commerce_product';
+    $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type_id);
+    foreach ($bundle_info as $type => $info) {
+      $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $type);
+      foreach ($fields as $field) {
+        if ($field->getType() == 'registration') {
+          $requirements['commerce_registration'] = [
+            'title' => t('Commerce registration'),
+            'severity' => REQUIREMENT_ERROR,
+            'description' => t('Commerce registration cannot be installed because the @label product type contains a registration field. Commerce registration requires that registration fields be added to product variation types instead.', [
+              '@label' => $info['label'],
+            ]),
+          ];
+          break 2;
+        }
+      }
+    }
+  }
+
+  return $requirements;
+}

@@ -1,0 +1,18 @@
+entity.registration.collection:
+  title: 'Registrations'
+  route_name: entity.registration.collection
+  parent: entity.user.collection
+  description: 'Manage user registrations.'
+
+entity.registration_type.collection:
+  title: 'Registration types'
+  route_name: entity.registration_type.collection
+  parent: system.admin_structure
+  description: 'Manage fields, form and display settings for your registration types.'
+
+registration.admin_settings:
+  title: 'Registration settings'
+  parent: user.admin_index
+  description: 'Configure default registration settings, including Settings fields and form display.'
+  weight: 10
+  route_name: registration.admin_settings

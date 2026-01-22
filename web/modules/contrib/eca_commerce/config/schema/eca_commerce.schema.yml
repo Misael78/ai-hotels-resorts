@@ -1,0 +1,321 @@
+eca.event.plugin.eca_commerce:filter_conditions:
+  type: eca.event.plugin
+  label: 'Core: Filter conditions'
+eca.event.plugin.eca_commerce::post_mail_send:
+  type: eca.event.plugin
+  label: 'Core: Post Mail Send'
+eca.event.plugin.eca_commerce::referenceable_plugin_types:
+  type: eca.event.plugin
+  label: 'Core: Referenceable Plugin Types'
+eca.event.plugin.eca_commerce::cart_empty:
+  type: eca.event.plugin
+  label: 'Cart: The cart was emptied'
+eca.event.plugin.eca_commerce::cart_entity_add:
+  type: eca.event.plugin
+  label: 'Cart: An entity was added to the cart'
+eca.event.plugin.eca_commerce::cart_order_item_add:
+  type: eca.event.plugin
+  label: 'Cart: Add order item to cart'
+eca.event.plugin.eca_commerce::cart_order_item_update:
+  type: eca.event.plugin
+  label: 'Cart: Update order item on cart'
+eca.event.plugin.eca_commerce::cart_order_item_remove:
+  type: eca.event.plugin
+  label: 'Cart: Remove order item from cart'
+eca.event.plugin.eca_commerce::cart_order_item_comparison_fields:
+  type: eca.event.plugin
+  label: 'Cart: Order item comparison fields'
+eca.event.plugin.eca_commerce::checkout_completion:
+  type: eca.event.plugin
+  label: 'Checkout: Completion'
+eca.event.plugin.eca_commerce::checkout_completion_register:
+  type: eca.event.plugin
+  label: 'Checkout: Completion register'
+eca.event.plugin.eca_commerce::order_assign:
+  type: eca.event.plugin
+  label: 'Order: Assign order'
+eca.event.plugin.eca_commerce::order_label:
+  type: eca.event.plugin
+  label: 'Order: After alter label'
+eca.event.plugin.eca_commerce::order_paid:
+  type: eca.event.plugin
+  label: 'Order: Paid'
+eca.event.plugin.eca_commerce::order_profiles:
+  type: eca.event.plugin
+  label: 'Order: Profile load'
+eca.event.plugin.eca_commerce::order_load:
+  type: eca.event.plugin
+  label: 'Order: Load'
+eca.event.plugin.eca_commerce::order_create:
+  type: eca.event.plugin
+  label: 'Order: Create'
+eca.event.plugin.eca_commerce::order_presave:
+  type: eca.event.plugin
+  label: 'Order: Presave'
+eca.event.plugin.eca_commerce::order_insert:
+  type: eca.event.plugin
+  label: 'Order: Insert'
+eca.event.plugin.eca_commerce::order_update:
+  type: eca.event.plugin
+  label: 'Order: Update'
+eca.event.plugin.eca_commerce::order_predelete:
+  type: eca.event.plugin
+  label: 'Order: Predelete'
+eca.event.plugin.eca_commerce::order_delete:
+  type: eca.event.plugin
+  label: 'Order: Delete'
+eca.event.plugin.eca_commerce::order_item_load:
+  type: eca.event.plugin
+  label: 'Order: Item load'
+eca.event.plugin.eca_commerce::order_item_create:
+  type: eca.event.plugin
+  label: 'Order: Item create'
+eca.event.plugin.eca_commerce::order_item_presave:
+  type: eca.event.plugin
+  label: 'Order: Item presave'
+eca.event.plugin.eca_commerce::order_item_insert:
+  type: eca.event.plugin
+  label: 'Order: Item insert'
+eca.event.plugin.eca_commerce::order_item_update:
+  type: eca.event.plugin
+  label: 'Order: Item update'
+eca.event.plugin.eca_commerce::order_item_predelete:
+  type: eca.event.plugin
+  label: 'Order: Item predelete'
+eca.event.plugin.eca_commerce::order_item_delete:
+  type: eca.event.plugin
+  label: 'Order: Item delete'
+eca.event.plugin.eca_commerce::payment_filter_payment_gateways:
+  type: eca.event.plugin
+  label: 'Payment: Filter Payment Gateways'
+eca.event.plugin.eca_commerce::payment_load:
+  type: eca.event.plugin
+  label: 'Payment: Load'
+eca.event.plugin.eca_commerce::payment_create:
+  type: eca.event.plugin
+  label: 'Payment: Create'
+eca.event.plugin.eca_commerce::payment_presave:
+  type: eca.event.plugin
+  label: 'Payment: Presave'
+eca.event.plugin.eca_commerce::payment_insert:
+  type: eca.event.plugin
+  label: 'Payment: Insert'
+eca.event.plugin.eca_commerce::payment_update:
+  type: eca.event.plugin
+  label: 'Payment: Update'
+eca.event.plugin.eca_commerce::payment_predelete:
+  type: eca.event.plugin
+  label: 'Payment: Predelete'
+eca.event.plugin.eca_commerce::payment_delete:
+  type: eca.event.plugin
+  label: 'Payment: Delete'
+eca.event.plugin.eca_commerce::price_number_format:
+  type: eca.event.plugin
+  label: 'Price: Number format'
+eca.event.plugin.eca_commerce::product_load:
+  type: eca.event.plugin
+  label: 'Product: Load'
+eca.event.plugin.eca_commerce::product_create:
+  type: eca.event.plugin
+  label: 'Product: Create'
+eca.event.plugin.eca_commerce::product_presave:
+  type: eca.event.plugin
+  label: 'Product: Presave'
+eca.event.plugin.eca_commerce::product_insert:
+  type: eca.event.plugin
+  label: 'Product: Insert'
+eca.event.plugin.eca_commerce::product_update:
+  type: eca.event.plugin
+  label: 'Product: Update'
+eca.event.plugin.eca_commerce::product_predelete:
+  type: eca.event.plugin
+  label: 'Product: Predelete'
+eca.event.plugin.eca_commerce::product_delete:
+  type: eca.event.plugin
+  label: 'Product: Delete'
+eca.event.plugin.eca_commerce::product_translation_insert:
+  type: eca.event.plugin
+  label: 'Product: Translation insert'
+eca.event.plugin.eca_commerce::product_translation_delete:
+  type: eca.event.plugin
+  label: 'Product: Translation delete'
+eca.event.plugin.eca_commerce::product_default_variation:
+  type: eca.event.plugin
+  label: 'Product: Default variation'
+eca.event.plugin.eca_commerce::product_variation_ajax_change:
+  type: eca.event.plugin
+  label: 'Product: Variation Ajax Change'
+eca.event.plugin.eca_commerce::product_variation_load:
+  type: eca.event.plugin
+  label: 'Product: Variation load'
+eca.event.plugin.eca_commerce::product_variation_create:
+  type: eca.event.plugin
+  label: 'Product: Variation create'
+eca.event.plugin.eca_commerce::product_variation_presave:
+  type: eca.event.plugin
+  label: 'Product: Variation presave'
+eca.event.plugin.eca_commerce::product_variation_insert:
+  type: eca.event.plugin
+  label: 'Product: Variation insert'
+eca.event.plugin.eca_commerce::product_variation_update:
+  type: eca.event.plugin
+  label: 'Product: Variation update'
+eca.event.plugin.eca_commerce::product_variation_predelete:
+  type: eca.event.plugin
+  label: 'Product: Variation predelete'
+eca.event.plugin.eca_commerce::product_variation_delete:
+  type: eca.event.plugin
+  label: 'Product: Variation delete'
+eca.event.plugin.eca_commerce::product_variation_translation_insert:
+  type: eca.event.plugin
+  label: 'Product: Variation translation insert'
+eca.event.plugin.eca_commerce::product_variation_translation_delete:
+  type: eca.event.plugin
+  label: 'Product: Variation translation delete'
+eca.event.plugin.eca_commerce::product_filter_variations:
+  type: eca.event.plugin
+  label: 'Product: Filter Variations'
+eca.event.plugin.eca_commerce::promotion_filter:
+  type: eca.event.plugin
+  label: 'Promotion: Filter'
+eca.event.plugin.eca_commerce::promotion_load:
+  type: eca.event.plugin
+  label: 'Promotion: Load'
+eca.event.plugin.eca_commerce::promotion_create:
+  type: eca.event.plugin
+  label: 'Promotion: Create'
+eca.event.plugin.eca_commerce::promotion_presave:
+  type: eca.event.plugin
+  label: 'Promotion: Presave'
+eca.event.plugin.eca_commerce::promotion_insert:
+  type: eca.event.plugin
+  label: 'Promotion: Insert'
+eca.event.plugin.eca_commerce::promotion_update:
+  type: eca.event.plugin
+  label: 'Promotion: Update'
+eca.event.plugin.eca_commerce::promotion_predelete:
+  type: eca.event.plugin
+  label: 'Promotion: Predelete'
+eca.event.plugin.eca_commerce::promotion_delete:
+  type: eca.event.plugin
+  label: 'Promotion: Delete'
+eca.event.plugin.eca_commerce::promotion_translation_insert:
+  type: eca.event.plugin
+  label: 'Promotion: Translate Insert'
+eca.event.plugin.eca_commerce::promotion_translation_delete:
+  type: eca.event.plugin
+  label: 'Promotion: Translate Delete'
+eca.event.plugin.eca_commerce::promotion_coupon_load:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon load'
+eca.event.plugin.eca_commerce::promotion_coupon_create:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon create'
+eca.event.plugin.eca_commerce::promotion_coupon_presave:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon presave'
+eca.event.plugin.eca_commerce::promotion_coupon_insert:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon insert'
+eca.event.plugin.eca_commerce::promotion_coupon_update:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon update'
+eca.event.plugin.eca_commerce::promotion_coupon_predelete:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon predelete'
+eca.event.plugin.eca_commerce::promotion_coupon_delete:
+  type: eca.event.plugin
+  label: 'Promotion: Coupon delete'
+eca.event.plugin.eca_commerce::store_load:
+  type: eca.event.plugin
+  label: 'Store: Load'
+eca.event.plugin.eca_commerce::store_create:
+  type: eca.event.plugin
+  label: 'Store: Create'
+eca.event.plugin.eca_commerce::store_presave:
+  type: eca.event.plugin
+  label: 'Store: Presave'
+eca.event.plugin.eca_commerce::store_insert:
+  type: eca.event.plugin
+  label: 'Store: Insert'
+eca.event.plugin.eca_commerce::store_update:
+  type: eca.event.plugin
+  label: 'Store: Update'
+eca.event.plugin.eca_commerce::store_predelete:
+  type: eca.event.plugin
+  label: 'Store: Predelete'
+eca.event.plugin.eca_commerce::store_delete:
+  type: eca.event.plugin
+  label: 'Store: Delete'
+eca.event.plugin.eca_commerce::store_translation_insert:
+  type: eca.event.plugin
+  label: 'Store: Translation insert'
+eca.event.plugin.eca_commerce::store_translation_delete:
+  type: eca.event.plugin
+  label: 'Store: Translation delete'
+eca.event.plugin.eca_commerce::tax_build:
+  type: eca.event.plugin
+  label: 'Tax: Build'
+eca.event.plugin.eca_commerce::tax_customer_profile:
+  type: eca.event.plugin
+  label: 'Tax: Customer profile'
+
+eca.condition.plugin.eca_commerce_commerce:*:
+  type: tamper.[%parent.original_id]
+  mapping:
+    negate:
+      type: boolean
+      label: 'Negate the Condition'
+
+action.configuration.eca_commerce_change_price_in_cart:
+  type: mapping
+  label: 'Change Price in Cart'
+  mapping:
+    final_price:
+      type: string
+      label: 'Final Price'
+
+action.configuration.eca_commerce_add_adjustment:
+  type: mapping
+  label: 'Order Item: Add Price Adjustment'
+  mapping:
+    method:
+      type: string
+      label: 'Method'
+      constraints:
+        NotBlank: [ ]
+        Choice:
+          - 'set:clear'
+          - 'append:drop_first'
+    type:
+      type: string
+      label: 'Type'
+      constraints:
+        NotBlank: [ ]
+        Choice:
+          callback: '\Drupal\eca_commerce\Plugin\Action\CreateAdjustmentAction::getValidAdjustmentTypes'
+    locked:
+      type: boolean
+      label: 'Locked'
+    label:
+      type: label
+      label: 'Label'
+    amount:
+      type: float
+      label: 'Amount'
+    currency:
+      type: string
+      label: 'Currency'
+      constraints:
+        NotBlank: [ ]
+        Choice:
+          callback: '\Drupal\eca_commerce\Plugin\Action\CreateAdjustmentAction::getValidCurrencies'
+    percentage:
+      type: float
+      label: 'Percentage'
+    included:
+      type: boolean
+      label: 'Included in the base price'
+    save_entity:
+      type: boolean
+      label: 'Save entity'

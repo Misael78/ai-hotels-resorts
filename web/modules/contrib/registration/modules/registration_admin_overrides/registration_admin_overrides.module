@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Allows administrators to override some validation for registrations.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function registration_admin_overrides_form_registration_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $registration_type = $form_state->getFormObject()->getEntity();
+
+  $form['registration_admin_overrides'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Administrative override settings'),
+    '#description' => t('These settings apply to accounts that can administer registrations of this type and have the relevant override permissions.'),
+  ];
+
+  $overridable_settings = \Drupal::service('registration_admin_overrides.override_checker')->getOverridableSettings($registration_type);
+  foreach ($overridable_settings as $setting => $label) {
+    $form['registration_admin_overrides'][$setting] = [
+      '#type' => 'checkbox',
+      '#title' => $label,
+      '#default_value' => $registration_type->getThirdPartySetting('registration_admin_overrides', $setting),
+    ];
+  }
+
+  $form['actions']['submit']['#submit'][] = 'registration_admin_overrides_form_registration_type_submit';
+}
+
+/**
+ * Implements submit handler for hook_form_BASE_FORM_ID_alter().
+ */
+function registration_admin_overrides_form_registration_type_submit(&$form, FormStateInterface $form_state) {
+  $registration_type = $form_state->getFormObject()->getEntity();
+  $overridable_settings = \Drupal::service('registration_admin_overrides.override_checker')->getOverridableSettings($registration_type);
+  foreach ($overridable_settings as $setting => $label) {
+    $registration_type->setThirdPartySetting('registration_admin_overrides', $setting, $form_state->getValue([
+      'registration_admin_overrides',
+      $setting,
+    ]));
+  }
+  $registration_type->save();
+}

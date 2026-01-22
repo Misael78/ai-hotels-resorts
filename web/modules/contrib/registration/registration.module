@@ -1,0 +1,432 @@
+<?php
+
+/**
+ * @file
+ * Provides user registration for events.
+ */
+
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Render\PlainTextOutput;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
+use Drupal\registration\Entity\RegistrationInterface;
+use Drupal\registration\RegistrationHelper;
+use Drupal\registration\RegistrationHostAccessControlHandler;
+use Drupal\registration\RegistrationHostEntityHandler;
+
+/**
+ * Implements hook_help().
+ */
+function registration_help($route_name, RouteMatchInterface $route_match) {
+  $output = '';
+  switch ($route_name) {
+    case 'help.page.registration':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Registration module provides user registration for events such as conferences and webinars. Site builders enable registration by adding a Registration field to the appropriate content types and configuring default settings. Each event can have Open and Close dates that control when registration is open. Register links and forms appear for events with open registration, and site visitors can use those to register. Each event is provided with a Manage Registrations listing that administrators can use to review and maintain the registrations. Administrators can configure reminders to be sent to registrants on a per-event basis.') . '</p>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Configuration') . '</dt>';
+      $output .= '<dd>' . t('All relevant entities such as Registration Types and Registration Settings are fieldable. This allows administrators to configure the fields that appear on the Register and Settings forms. If the Views module is enabled then views listings are automatically created when the Registration module is installed. Site builders can customize these views to control what appears on the Manage Registrations and other administrative listings. The module leverages the core Workflows module to define the allowed registration states and transitions.') . '</dd>';
+      $output .= '<dt>' . t('Entity types') . '</dt>';
+      $output .= '<dd>' . t('Registration fields can be attached to any fieldable entity type, including any custom entity types that you define for your events. The most common use case would likely be creating an Event content type and enabling that for registration. If you have the Drupal Commerce module installed, you can add registration fields to Commerce products or product variations. However any fieldable entity can be used as the host.') . '</dd>';
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * @see \Drupal\registration\Cron\ExpireHeldRegistrations
+ * @see \Drupal\registration\Cron\SendReminders
+ * @see \Drupal\registration\Cron\SetAndForget
+ */
+function registration_cron() {
+  \Drupal::service('registration.cron.send_reminders')->run();
+  \Drupal::service('registration.cron.expire_held_registrations')->run();
+
+  // The "set and forget" functionality is deprecated.
+  // @see https://www.drupal.org/node/3506953
+  $config = \Drupal::config('registration.settings');
+  if ($config->get('set_and_forget')) {
+    \Drupal::service('registration.cron.set_and_forget')->run();
+  }
+}
+
+/**
+ * Implements hook_entity_access().
+ */
+function registration_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  // Do not allow settings to be deleted by site builders. These are deleted
+  // automatically when registration fields are removed. Using a locked field
+  // was not an option here because site builders need to be able to provide
+  // field default values for registration settings fields.
+  if ($entity instanceof FieldConfigInterface) {
+    if ($operation == 'delete') {
+      if ($entity->getType() == 'registration_settings') {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+  // No opinion.
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function registration_entity_type_alter(array &$entity_types) {
+  // Add validation constraints to the field config entity types.
+  // This prevents more than one registration field on a bundle, etc.
+  $entity_types['field_config']->addConstraint('registration_field');
+  $entity_types['field_storage_config']->addConstraint('registration_field');
+
+  // If the Entity API contributed module is installed, use its views data
+  // handler to derive additional reverse relationships. This is a workaround
+  // to core issue https://www.drupal.org/project/drupal/issues/2706431.
+  // @todo Remove once issue #2706431 is resolved.
+  if (\Drupal::moduleHandler()->moduleExists('entity')) {
+    $entity_types['registration']->setHandlerClass('views_data', 'Drupal\entity\EntityViewsData');
+  }
+
+  // If the host_entity handler is overridden, ensure that the
+  // registration_host_entity handler is too, providing back compatibility.
+  // @todo Remove before registration:4.0.0.
+  $modern = $entity_types['registration']->getHandlerClass('registration_host_entity');
+  $legacy = $entity_types['registration']->getHandlerClass('host_entity');
+  if ($legacy !== $modern) {
+    // The registration and registration_waitlist modules provide
+    // their own host_entity handlers, but they also provide
+    // registration_host_entity handlers too, so can be ignored.
+    if (!in_array($legacy, [RegistrationHostEntityHandler::class, 'Drupal\registration_waitlist\HostEntityHandler'])) {
+      @trigger_error("Using the host_entity handler of the registration entity type is deprecated in registration:3.1.5 and is removed from registration:4.0.0. Use the registration_host_entity handler for the host entity type instead. See https://www.drupal.org/node/3462126", E_USER_DEPRECATED);
+      $entity_types['registration']->setHandlerClass('registration_host_entity', $legacy);
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function registration_theme(): array {
+  return [
+    'registration_form' => [
+      'render element' => 'form',
+    ],
+    'registration' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for a registration.
+ *
+ * Default template: registration.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing rendered fields.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_registration(array &$variables) {
+  /** @var Drupal\registration\Entity\RegistrationInterface $registration */
+  $registration = $variables['elements']['#registration'];
+
+  $variables['registration_entity'] = $registration;
+  $variables['registration'] = [];
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['registration'][$key] = $variables['elements'][$key];
+  }
+  // Override the label for the host entity to be more descriptive.
+  // For example, display "Event:" instead of "Host entity:", if
+  // the registration is for a node instance of type "Event".
+  if (!empty($variables['registration']['host_entity'])) {
+    if (isset($variables['registration']['host_entity']['#object'])) {
+      $entity = $variables['registration']['host_entity']['#object'];
+      if ($entity instanceof RegistrationInterface) {
+        if ($label = $entity->getHostEntityTypeLabel()) {
+          $variables['registration']['host_entity']['#title'] = $label;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function registration_entity_operation(EntityInterface $entity): array {
+  $operations = [];
+  if (($entity instanceof RegistrationInterface) && $entity->access('view')) {
+    // Add a View operation for registrations. This will be first, followed
+    // by the Edit and Delete operations (if the user has those permissions).
+    $operations['view'] = [
+      'title' => t('View'),
+      'url' => Url::fromRoute('entity.registration.canonical', [
+        'registration' => $entity->id(),
+      ]),
+      'weight' => -1,
+    ];
+  }
+  return $operations;
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function registration_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity instanceof RegistrationInterface) {
+    // Make registration operations links language aware.
+    RegistrationHelper::applyInterfaceLanguageToLinks($operations);
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function registration_entity_insert(EntityInterface $entity) {
+  if ($entity instanceof FieldConfig) {
+    if ($entity->getType() == 'registration') {
+      // Rebuild routes, block plugins and local tasks when Registration fields
+      // are added.
+      \Drupal::service("router.builder")->rebuild();
+      \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+      \Drupal::service('plugin.manager.menu.local_task')->clearCachedDefinitions();
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function registration_entity_delete(EntityInterface $entity) {
+  if ($entity instanceof FieldConfig) {
+    if ($entity->getType() == 'registration') {
+      // Rebuild routes, block plugins and local tasks when Registration fields
+      // are deleted.
+      \Drupal::service("router.builder")->rebuild();
+      \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+      \Drupal::service('plugin.manager.menu.local_task')->clearCachedDefinitions();
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function registration_entity_presave(EntityInterface $entity) {
+  // Validate new registration fields since Field UI skips constraints.
+  if ($entity->isNew()) {
+    if (($entity instanceof FieldConfig) || ($entity instanceof FieldStorageConfig)) {
+      if ($entity->getType() == 'registration') {
+        $violations = $entity->getTypedData()->validate();
+        // Field UI catches exceptions thrown and displays the error to the
+        // user.
+        foreach ($violations as $violation) {
+          /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+          throw new \InvalidArgumentException($violation->getMessage());
+        }
+      }
+    }
+  }
+
+  // Always recompute email address since it is derived from other fields.
+  if ($entity instanceof RegistrationInterface) {
+    if ($user = $entity->getUser()) {
+      $entity->set('mail', $user->getEmail());
+    }
+    else {
+      $entity->set('mail', $entity->getAnonymousEmail());
+    }
+
+    // If the registration user was updated, clear cache tags for the old user.
+    if ($entity->original && ($entity->getUserId() != $entity->original->getUserId())) {
+      if ($user = $entity->original->getUser()) {
+        Cache::invalidateTags(['registration.user:' . $user->id()]);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function registration_entity_update(EntityInterface $entity) {
+  // Use a static to ensure a rebuild is done at most once per page load.
+  static $rebuild = FALSE;
+  if (!$rebuild) {
+    // Rebuild routes and local tasks when Registration fields are updated.
+    if ($entity instanceof EntityFormDisplay) {
+      $entity_type_id = $entity->getTargetEntityTypeId();
+      $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+      if (\Drupal::service('registration.manager')->hasRegistrationField($entity_type)) {
+        $rebuild = TRUE;
+        \Drupal::service("router.builder")->rebuild();
+        \Drupal::service('plugin.manager.menu.local_task')->clearCachedDefinitions();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_field_info_entity_type_ui_definitions_alter().
+ */
+function registration_field_info_entity_type_ui_definitions_alter(array &$ui_definitions, string $entity_type_id) {
+  if ($entity_type_id === 'registration') {
+    // Cannot add a registration field to a registration type.
+    unset($ui_definitions['registration']);
+  }
+  // Cannot add a registration field to registration settings.
+  if ($entity_type_id === 'registration_settings') {
+    unset($ui_definitions['registration']);
+  }
+  // Cannot add a registration field to an entity type without an "id" key.
+  $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+  if (!$entity_type->getKey('id')) {
+    unset($ui_definitions['registration']);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function registration_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $view = $form_state->get('view');
+  if ($view->id() == 'manage_registrations') {
+    // Hide the manage registrations filter when there are only a few rows.
+    $route_match = \Drupal::routeMatch();
+    $registration_manager = \Drupal::service('registration.manager');
+    if ($host_entity = $registration_manager->getEntityFromParameters($route_match->getParameters(), TRUE)) {
+      $config = \Drupal::config('registration.settings');
+      if ($host_entity->getRegistrationCount() < $config->get('hide_filter')) {
+        $form['#access'] = FALSE;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function registration_form_workflow_delete_form_alter(
+  array &$form,
+  FormStateInterface $form_state,
+  $form_id,
+) {
+  // If there are no actions, the delete is not allowed. Alter the error
+  // message to mention registration types.
+  if (empty($form['actions'])) {
+    $form['description'] = ['#markup' => t('This workflow is in use. You cannot remove this workflow until you have removed all content using it and there are no registration types using it.')];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function registration_form_workflow_state_delete_form_alter(
+  array &$form,
+  FormStateInterface $form_state,
+  $form_id,
+) {
+  // If there are no actions, the delete is not allowed. Alter the error
+  // message to mention registration types.
+  if (empty($form['actions'])) {
+    $form['description'] = ['#markup' => t('This workflow state is in use. You cannot remove this workflow state until you have removed all content using it and there are no registration types using it.')];
+  }
+}
+
+/**
+ * Implements hook_field_widget_complete_WIDGET_TYPE_form_alter().
+ */
+function registration_field_widget_complete_datetime_default_form_alter(
+  &$field_widget_complete_form,
+  FormStateInterface $form_state,
+  $context,
+) {
+  // Add timezone to the datetime widgets when editing registration settings.
+  if ($context['items']
+    ->getFieldDefinition()
+    ->getTargetEntityTypeId() == 'registration_settings') {
+    $field_widget_complete_form['widget'][0]['#description'] .= ' ' . t('(This uses the @timezone timezone.)', [
+      '@timezone' => date_default_timezone_get(),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function registration_mail($key, &$message, $params) {
+  // Replace tokens and set headers for HTML.
+  $token = \Drupal::token();
+  $langcode = $message['langcode'];
+  $variables = $params['token_entities'];
+  $options = ['langcode' => $langcode, 'clear' => TRUE];
+  $message['subject'] = PlainTextOutput::renderFromHtml($token->replace($params['subject'], $variables, $options));
+  $message['body'][] = new FormattableMarkup($token->replace($params['message'], $variables, $options), []);
+  if (\Drupal::config('registration.settings')->get('html_email')) {
+    $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+  }
+  // Replace the From header if directed to do so by configuration.
+  if (\Drupal::config('registration.settings')->get('replace_from_header')) {
+    if (!empty($message['params']['from'])) {
+      $message['headers']['From'] = $message['params']['from'];
+    }
+  }
+  // Set a basic From header if one is not set yet.
+  elseif (!empty($message['params']['from']) && empty($message['headers']['From'])) {
+    $message['headers']['From'] = $message['params']['from'];
+  }
+}
+
+/**
+ * Implements hook_migration_plugins_alter().
+ */
+function registration_migration_plugins_alter(array &$migrations) {
+  if (isset($migrations['d7_field_instance'])) {
+    // Migrate registration types before field instances since the field
+    // instances have references to the registration types as field bundles.
+    $migrations['d7_field_instance']['migration_dependencies']['optional'][] = 'd7_registration_type';
+  }
+}
+
+/**
+ * Implements hook_entity_type_build().
+ */
+function registration_entity_type_build(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+  foreach ($entity_types as $entity_type_id => $entity_type) {
+    if (!$entity_type->getHandlerClass('registration_host_access')) {
+      $entity_type->setHandlerClass('registration_host_access', RegistrationHostAccessControlHandler::class);
+    }
+    if (!$entity_type->getHandlerClass('registration_host_entity')) {
+      $entity_type->setHandlerClass('registration_host_entity', RegistrationHostEntityHandler::class);
+    }
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ *
+ * In order to ensure backwards compatibility for the change of handler id
+ * from host_entity to registration_host_entity, our alter hook needs to be
+ * last.
+ *
+ * @todo Remove before registration:4.0.0.
+ */
+function registration_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'entity_type_alter' && isset($implementations['registration'])) {
+    $group = $implementations['registration'];
+    unset($implementations['registration']);
+    $implementations['registration'] = $group;
+  }
+}

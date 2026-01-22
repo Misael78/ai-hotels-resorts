@@ -1,0 +1,9 @@
+administer metatag ai:
+  title: 'Administer Metatag AI'
+  description: Control the main settings.
+  'restrict access': TRUE
+
+administer metatag content:
+  title: 'Administer Metatag Content'
+  description: Modify content type settings and control metatag generator button.
+  'restrict access': TRUE

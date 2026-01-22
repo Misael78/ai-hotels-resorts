@@ -1,0 +1,10 @@
+name: 'Hotel AI Automations'
+type: module
+description: 'Generates AI-based commercial content for hotel rooms.'
+core_version_requirement: ^11
+package: 'Custom'
+dependencies:
+  - drupal:node
+  - drupal:ai
+  - drupal:ai_provider_openai
+

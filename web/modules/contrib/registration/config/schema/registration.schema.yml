@@ -1,0 +1,242 @@
+# Schema for the configuration files of the Registration module.
+
+registration.type.*:
+  type: config_entity
+  label: 'Registration type settings'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    workflow:
+      type: string
+      label: 'Workflow'
+    defaultState:
+      type: string
+      label: 'Default state'
+    heldExpireTime:
+      type: integer
+      label: 'Hold expiration hours'
+    heldExpireState:
+      type: string
+      label: 'Hold expiration state'
+
+registration.settings:
+  type: config_object
+  label: 'Registration settings'
+  mapping:
+    set_and_forget:
+      type: boolean
+      label: 'Set and forget mode'
+    broadcast_filter:
+      type: boolean
+      label: 'Add a status filter to the Email registrants form'
+    lenient_access_check:
+      type: boolean
+      label: 'Disregard open and close dates in the register access check'
+    limit_field_values:
+      type: boolean
+      label: 'Limit registration field values by role'
+    hide_filter:
+      type: integer
+      label: 'Manage Registrations filter threshold'
+    queue_notifications:
+      type: integer
+      label: 'Queue notifications threshold'
+    html_email:
+      type: boolean
+      label: 'Send email as HTML'
+    prevent_edit_disabled:
+      type: boolean
+      label: 'Prevent edit of existing registrations when new registration is disabled'
+    replace_from_header:
+      type: boolean
+      label: 'Replace the "From" header'
+    sync_registration_settings:
+      type: boolean
+      label: 'Synchronize registration settings'
+    sync_registration_settings_all_fields:
+      type: boolean
+      label: 'Synchronize all fields'
+
+field.formatter.settings.registration_host_entity:
+  type: mapping
+  label: 'Host entity display format settings'
+  mapping:
+    link:
+      type: boolean
+      label: 'Link'
+
+field.formatter.settings.registration_form:
+  type: mapping
+  label: 'Registration form format settings'
+  mapping:
+    show_reason:
+      type: boolean
+      label: 'Show reason when form is hidden'
+
+field.formatter.settings.registration_link:
+  type: mapping
+  label: 'Registration link format settings'
+  mapping:
+    label:
+      type: string
+      label: 'Label'
+    show_reason:
+      type: boolean
+      label: 'Show reason when link is hidden'
+    css_classes:
+      type: string
+      label: 'CSS classes'
+
+field.widget.settings.registration_type:
+  type: mapping
+  label: 'Registration type widget settings'
+  mapping:
+    hide_register_tab:
+      type: boolean
+      label: 'Hide Register Tab'
+
+field.widget.settings.registration_spaces_default:
+  type: mapping
+  label: 'Registration spaces widget settings'
+  mapping:
+    hide_single_space:
+      type: boolean
+      label: 'Hide single space'
+    placeholder:
+      type: label
+      label: 'Placeholder'
+
+field.widget.settings.registration_state_default:
+  type: mapping
+  label: 'Registration state widget settings'
+  mapping:
+    hide_single_state:
+      type: boolean
+      label: 'Hide single state'
+
+field.field_settings.registration:
+  type: mapping
+  label: 'Registration field settings'
+  mapping:
+    allowed_types:
+      type: sequence
+      label: 'Allowed registration types'
+      sequence:
+        type: string
+
+field.value.registration:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    registration_type:
+      type: string
+      label: 'Registration type'
+    registration_settings:
+      type: string
+      form_element_class: \Drupal\registration\FormElement\RegistrationSettings
+      label: 'Registration settings'
+
+registration.state:
+  type: workflows.state
+  mapping:
+    active:
+      type: boolean
+      label: 'Active'
+    canceled:
+      type: boolean
+      label: 'Canceled'
+    held:
+      type: boolean
+      label: 'Held'
+    show_on_form:
+      type: boolean
+      label: 'Show on form'
+    description:
+      type: string
+      label: 'Description'
+
+action.configuration.registration_send_email_action:
+  type: action_configuration_default
+  label: 'Configuration for the registration send email action'
+
+action.configuration.registration_views_set_state_action:
+  type: action_configuration_default
+  label: 'Configuration for the set registration state action'
+
+block.settings.registration_status:*:
+  type: block_settings
+  label: 'Registration status block'
+  mapping:
+    remaining_spaces_single:
+      type: string
+      label: 'Remaining spaces singular'
+    remaining_spaces_plural:
+      type: string
+      label: 'Remaining spaces plural'
+    enabled:
+      type: mapping
+      label: 'Registration is enabled'
+      mapping:
+        value:
+          type: string
+        format:
+          type: string
+    disabled_before_open:
+      type: mapping
+      label: 'Registration is not open yet'
+      mapping:
+        value:
+          type: string
+        format:
+          type: string
+    disabled_after_close:
+      type: mapping
+      label: 'Registration is closed'
+      mapping:
+        value:
+          type: string
+        format:
+          type: string
+    disabled_capacity:
+      type: mapping
+      label: 'Registration is full'
+      mapping:
+        value:
+          type: string
+        format:
+          type: string
+    disabled:
+      type: mapping
+      label: 'Registration is disabled'
+      mapping:
+        value:
+          type: string
+        format:
+          type: string
+
+workflow.type_settings.registration:
+  type: mapping
+  mapping:
+    states:
+      type: sequence
+      label: 'Registration states'
+      orderby: key
+      sequence:
+        type: registration.state
+        label: 'States'
+    transitions:
+      type: sequence
+      orderby: key
+      sequence:
+        type: workflows.transition
+        label: 'Transitions'
+    default_registration_state:
+      type: string
+      label: 'Default registration state'
+    complete_registration_state:
+      type: string
+      label: 'Complete registration state'

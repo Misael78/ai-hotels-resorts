@@ -1,0 +1,7 @@
+elevenlabs.settings:
+  type: mapping
+  label: 'Elevenlabs Settings'
+  mapping:
+    api_key:
+      type: string
+      label: 'The API key for Elevenlabs via Key module'

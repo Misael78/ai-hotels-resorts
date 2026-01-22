@@ -1,0 +1,55 @@
+services:
+
+  commerce_registration.availability_checker:
+    class: Drupal\commerce_registration\CommerceRegistrationAvailabilityChecker
+    arguments: [
+      '@entity_type.manager',
+    ]
+    tags:
+      - { name: commerce_order.availability_checker }
+
+  commerce_registration.cart_subscriber:
+    class: Drupal\commerce_registration\EventSubscriber\CartEventSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  commerce_registration.manage_commerce_registrations_access_checker:
+    class: Drupal\commerce_registration\Access\ManageCommerceRegistrationsAccessCheck
+    arguments: [
+      '@registration.manage_registrations_access_checker',
+      '@entity_type.manager',
+      '@registration.manager',
+    ]
+    tags:
+      - { name: access_check, applies_to: _manage_commerce_registrations_access_check }
+
+  commerce_registration.manager:
+    class: Drupal\commerce_registration\CommerceRegistrationManager
+    arguments: [
+      '@entity_type.manager',
+    ]
+
+  commerce_registration.order_subscriber:
+    class: Drupal\commerce_registration\EventSubscriber\OrderSubscriber
+    arguments: [
+      '@entity_type.manager',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  commerce_registration.product_subscriber:
+    class: Drupal\commerce_registration\EventSubscriber\ProductEventSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  commerce_registration.registration_subscriber:
+    class: Drupal\commerce_registration\EventSubscriber\RegistrationEventSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  commerce_registration.registration_order_processor:
+    class: Drupal\commerce_registration\OrderProcessor\RegistrationOrderProcessor
+    arguments:
+      - '@entity_type.manager'
+    tags:
+      - { name: commerce_order.order_processor, priority: 100 }

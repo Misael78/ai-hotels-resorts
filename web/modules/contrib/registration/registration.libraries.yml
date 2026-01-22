@@ -1,0 +1,17 @@
+form:
+  version: VERSION
+  css:
+    theme:
+      css/registration.form.css: {}
+
+view:
+  version: VERSION
+  css:
+    theme:
+      css/registration.css: {}
+
+manage_registrations:
+  version: VERSION
+  css:
+    theme:
+      css/manage.registrations.css: {}

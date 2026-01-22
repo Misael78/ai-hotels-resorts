@@ -1,0 +1,23 @@
+{
+    "name": "drupal/commerce_registration",
+    "description": "Commerce Registration integrates Drupal Commerce with Registration.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://drupal.org/project/commerce_registration",
+    "authors": [
+        {
+            "name": "John Oltman",
+            "homepage": "https://www.drupal.org/u/john.oltman",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "drupal/commerce": "^3.0",
+        "drupal/registration": "^3.4.2"
+    },
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/commerce_registration",
+        "source": "https://git.drupalcode.org/project/commerce_registration"
+    },
+    "minimum-stability": "dev"
+}

@@ -1,0 +1,17 @@
+name: Registration
+type: module
+description: 'Provides user registration for events.'
+package: Registration
+core_version_requirement: ^10.3 || ^11
+configure: registration.admin_settings
+dependencies:
+  - drupal:datetime
+  - drupal:field
+  - drupal:text
+  - drupal:user
+  - drupal:workflows
+
+# Information added by Drupal.org packaging script on 2025-07-26
+version: '3.4.4'
+project: 'registration'
+datestamp: 1753536113

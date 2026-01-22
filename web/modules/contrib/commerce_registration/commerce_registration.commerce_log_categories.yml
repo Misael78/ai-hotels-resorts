@@ -1,0 +1,3 @@
+commerce_registration:
+  label: Commerce Registration
+  entity_type: commerce_order

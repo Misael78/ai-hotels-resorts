@@ -1,0 +1,12 @@
+name: Registration Purger
+type: module
+description: 'Deletes registrations and registration settings when a host entity is deleted.'
+package: Registration
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - registration:registration
+
+# Information added by Drupal.org packaging script on 2025-07-26
+version: '3.4.4'
+project: 'registration'
+datestamp: 1753536113

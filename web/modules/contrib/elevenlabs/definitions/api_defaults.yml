@@ -1,0 +1,139 @@
+text_to_speech:
+  input:
+    description: 'Input provided to Elevenlabs.'
+    type: 'string'
+    required: true
+  authentication:
+    api_key:
+      description: 'Elevenlabs API Key'
+      type: 'string'
+      default: ''
+      required: true
+  configuration:
+    model:
+      label: 'Elevenlabs Model'
+      description: 'The model to use, usually not needed to change.'
+      type: 'string'
+      default: 'eleven_multilingual_v2'
+      required: true
+    speed:
+      label: 'Speed'
+      description: 'Controls the speed of the generated speech. Values range from 0.7 to 1.2, with 1.0 being the default speed. Lower values create slower, more deliberate speech while higher values produce faster-paced speech. Extreme values can impact the quality of the generated speech.'
+      type: 'integer'
+      default: 1
+      required: false
+      constraints:
+        min: 0.7
+        max: 1.2
+        step: 0.01
+    stability:
+      label: 'Stability'
+      description: 'Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion. Range 0 to 1.'
+      type: 'integer'
+      default: 0.5
+      required: false
+      constraints:
+        min: 0
+        max: 1
+        step: 0.01
+    similarity_boost:
+      label: 'Similarity Boost'
+      description: 'Determines how closely the AI should adhere to the original voice when attempting to replicate it. Range 0 to 1.'
+      type: 'integer'
+      default: 0.75
+      required: false
+      constraints:
+        min: 0
+        max: 1
+        step: 0.01
+    style:
+      label: 'Style'
+      description: 'Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0. Range 0 to 1.'
+      type: 'integer'
+      default: 0
+      required: false
+      constraints:
+        min: 0
+        max: 1
+        step: 0.01
+    seed:
+      label: 'Seed'
+      description: 'If specified, elevenlabs will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295.'
+      type: 'integer'
+      default: 294967
+      required: false
+      constraints:
+        min: 0
+        max: 4294967295
+        step: 1
+    use_speaker_boost:
+      label: 'Use Speaker Boost'
+      description: 'This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency.'
+      type: 'boolean'
+      default: true
+      required: false
+    apply_text_normalization:
+      label: 'Apply Text Normalization'
+      description: 'This parameter controls text normalization with three modes: ‘auto’, ‘on’, and ‘off’. When set to ‘auto’, the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With ‘on’, text normalization will always be applied, while with ‘off’, it will be skipped. Cannot be turned on for ‘eleven_turbo_v2_5’ or ‘eleven_flash_v2_5’ models.'
+      type: 'string'
+      default: 'auto'
+      required: false
+      constraints:
+        options:
+          - 'auto'
+          - 'on'
+          - 'off'
+speech_to_speech:
+  input:
+    description: 'Input provided to Elevenlabs.'
+    type: 'string'
+    required: true
+  authentication:
+    api_key:
+      description: 'Elevenlabs API Key'
+      type: 'string'
+      default: ''
+      required: true
+  configuration:
+    model:
+      label: 'Elevenlabs Model'
+      description: 'The model to use, usually not needed to change.'
+      type: 'string'
+      default: 'eleven_english_sts_v2'
+      required: true
+    stability:
+      label: 'Stability'
+      description: 'Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion. Range 0 to 1.'
+      type: 'integer'
+      default: 0.5
+      required: false
+      constraints:
+        min: 0
+        max: 1
+        step: 0.01
+    similarity_boost:
+      label: 'Similarity Boost'
+      description: 'Determines how closely the AI should adhere to the original voice when attempting to replicate it. Range 0 to 1.'
+      type: 'integer'
+      default: 0.75
+      required: false
+      constraints:
+        min: 0
+        max: 1
+        step: 0.01
+    style:
+      label: 'Style'
+      description: 'Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0. Range 0 to 1.'
+      type: 'integer'
+      default: 0
+      required: false
+      constraints:
+        min: 0
+        max: 1
+        step: 0.01
+    use_speaker_boost:
+      label: 'Use Speaker Boost'
+      description: 'This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency.'
+      type: 'boolean'
+      default: true
+      required: false

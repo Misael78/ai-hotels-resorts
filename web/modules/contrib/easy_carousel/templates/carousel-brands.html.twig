@@ -1,0 +1,90 @@
+{#
+/**
+ * @file
+ * This template is used to render a carousel brands.
+ *
+ * Available variables:
+ * - carousel: carousel entity.
+ * - slides: A list of carousel items.
+ * - configuration: The configuration block
+ * - data: An array of carousel values.
+ *
+ * @see Drupal\easy_carousel\Plugin\Block\BrandsCarouselBlock class.
+ */
+#}
+
+{% if data.status %}
+
+	<div
+		class="easy-carousel--brands"
+		data-id="{{ data.cid }}"
+		data-last_updated="{{ data.config.last_updated }}">
+
+		<div class="list">
+			{% for slide in data.items %}
+				{% if slide.status %}
+
+					<div class="slide text-align-{{ slide.text_alignment }}" style="width: {{ data.config.slide_width }}px; background-color: {{ slide.background_color }}; margin-right: {{ data.config.margin_between_slides }}px">
+						{% if slide.media %}
+							{% if slide.media.bundle == 'image' %}
+								<div class="slide-image managed">
+									<img src="{{ file_url(slide.media.uri) }}" alt="{{ slide.media.alt }}" />
+								</div>
+							{% elseif slide.media.bundle == 'video' %}
+								<video controls>
+									<source src="{{ file_url(slide.media.uri) }}" type="{{ slide.media.mime_type }}">
+								</video>
+							{% elseif slide.media.bundle == 'remote_video' %}
+								<iframe
+									src="{{ embed_url(slide.media.uri, slide.video_options) }}"
+									class="easy-carousel-remote-video"
+									sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"></iframe>
+							{% endif %}
+						{% endif %}
+
+						{% if slide.base64_image %}
+							<div class="slide-image b64">
+								<img src="{{ slide.base64_image }}" />
+							</div>
+						{% endif %}
+
+						{% if slide.external_image %}
+							<div class="slide-image external">
+								<img src="{{ slide.external_image.uri }}" title="{{ slide.external_image.title }}" />
+							</div>
+						{% endif %}
+
+						{% if (slide.title and slide.show_title) or slide.description or slide.link %}
+							<div class="slide-content text-align-{{ slide.text_alignment }} text-position-{{ slide.text_position }} {{ data.overlayed_content ? 'overlayed-content' : '' }}" style="background-color: {{ slide.background_color }};">
+
+								{% if slide.show_title %}
+									<div class="slide-title" style="color: {{ slide.title_color }};">{{ slide.label }}</div>
+								{% endif %}
+
+								{% if slide.description %}
+									<div class="slide-text" style="color: {{ slide.description_color }};">{{ slide.description|raw }}</div>
+								{% endif %}
+
+								{% if slide.link %}
+									<a
+										class="slide-title link"
+										href="{{ slide.link.uri }}"
+										target="{{ slide.link.target }}"
+										style="color: {{ slide.title_color }}"
+										title="{{ slide.link.title }}">
+										{% if slide.link.title %}
+											{{ slide.link.title }}
+										{% else %}
+											{{ 'Visit'|t }}
+										{% endif %}
+									</a>
+								{% endif %}
+							</div>
+						{% endif %}
+
+					</div>
+				{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+{% endif %}

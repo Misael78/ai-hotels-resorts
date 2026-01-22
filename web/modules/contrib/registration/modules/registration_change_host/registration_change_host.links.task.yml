@@ -1,0 +1,4 @@
+entity.registration.change_host:
+  class: '\Drupal\registration_change_host\Plugin\Menu\LocalTask\ChangeHostTask'
+  route_name: entity.registration.change_host
+  base_route: entity.registration.canonical

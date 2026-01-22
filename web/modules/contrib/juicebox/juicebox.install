@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Juicebox module.
+ */
+
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\juicebox\Plugin\Field\FieldFormatter\JuiceboxFieldFormatter;
+
+/**
+ * Implements hook_requirements().
+ */
+function juicebox_requirements($phase) {
+  $requirements = [];
+  // Check on the installation status of the Juicebox library. Note that
+  // we do not do this check during the 'install' phase as the libraries API
+  // functions will not always be available then (if installing Drupal via an
+  // install profile, etc.).
+  if ($phase == 'runtime') {
+    // Get locally installed library details.
+    $library = \Drupal::service('juicebox.formatter')->getLibrary(TRUE, TRUE);
+    $requirements['juicebox'] = [
+      'title' => t('Juicebox Javascript Library'),
+    ];
+    if ($library['installed']) {
+      $requirements['juicebox']['value'] = $library['version'];
+      $requirements['juicebox']['severity'] = REQUIREMENT_INFO;
+    }
+    else {
+      $requirements['juicebox']['value'] = $library['error'];
+      $requirements['juicebox']['description'] = $library['error message'];
+      $requirements['juicebox']['severity'] = REQUIREMENT_ERROR;
+    }
+
+    // Check to ensure that there are no media reference fields whose display
+    // configuration is invalid.
+    $juicebox_formatted_fields = [];
+
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+
+    /** @var array|\Drupal\Core\Entity\Display\EntityViewDisplayInterface[] $entity_displays */
+    $entity_displays = $entity_type_manager->getStorage('entity_view_display')->loadMultiple();
+
+    // Gather any fields that are configured to use the juicebox formatter.
+    foreach ($entity_displays as $entity_display) {
+
+      // Skip disabled displays.
+      if (!$entity_display->get('status')) {
+        continue;
+      }
+
+      foreach ($entity_display->getComponents() as $field_name => $component) {
+        if (array_key_exists('type', $component) && $component['type'] === 'juicebox_formatter') {
+          $juicebox_formatted_fields[] = [
+            'entity_type_id' => $entity_display->getTargetEntityTypeId(),
+            'bundle' => $entity_display->getTargetBundle(),
+            'view_mode' => $entity_display->getMode(),
+            'field_name' => $field_name,
+          ];
+        }
+      }
+    }
+
+    // Check any fields for compatibility.
+    if ($juicebox_formatted_fields) {
+      /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager */
+      $entity_field_manager = \Drupal::service('entity_field.manager');
+
+      // Filter out all compatible fields.
+      $incompatible_fields = array_filter($juicebox_formatted_fields, static function ($field) use ($entity_field_manager) {
+        $field_definition = $entity_field_manager->getFieldDefinitions(
+          $field['entity_type_id'],
+          $field['bundle']
+        )[$field['field_name']] ?? NULL;
+        return !$field_definition || !JuiceboxFieldFormatter::isApplicable($field_definition);
+      });
+
+      // If any fields remain, they're incompatible!
+      if ($incompatible_fields) {
+
+        /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info */
+        $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+
+        $incompatible_field_messages = array_map(static function ($field) use ($entity_type_manager, $entity_field_manager, $entity_type_bundle_info) {
+          $entity_type = $entity_type_manager->getDefinition($field['entity_type_id']);
+          $bundle_info = $entity_type_bundle_info->getBundleInfo($field['entity_type_id'])[$field['bundle']] ?? NULL;
+          $field_definition = $entity_field_manager->getFieldDefinitions(
+            $field['entity_type_id'], $field['bundle'])[$field['field_name']] ?? NULL;
+
+          return new TranslatableMarkup('The %field_label field on the %display_label display of %bundle_label %entity_label is misconfigured!', [
+            '%field_label' => $field_definition ? $field_definition->getLabel() : '',
+            '%display_label' => $field['view_mode'],
+            '%bundle_label' => $bundle_info ? $bundle_info['label'] : '',
+            '%entity_label' => $entity_type->getLabel(),
+          ]);
+        }, $incompatible_fields);
+
+        $errors_list = [
+          '#type' => 'inline_template',
+          '#template' => <<<TWIG
+            <ul>
+              {% for invalid_field in invalid_fields %}
+                <li>{{ invalid_field }}</li>
+              {% endfor %}
+            </ul>
+            TWIG,
+          '#context' => [
+            'invalid_fields' => $incompatible_field_messages,
+          ],
+        ];
+
+        /** @var \Drupal\Core\Render\RendererInterface $renderer */
+        $renderer = \Drupal::service('renderer');
+
+        $requirements['juicebox_field_formatter'] = [
+          'severity' => REQUIREMENT_ERROR,
+          'title' => new TranslatableMarkup('Juicebox field formatter configuration'),
+          'description' => new TranslatableMarkup('One or more juicebox formatted fields contain invalid configuration! See <a href="@change_record_url">Juicebox formatted fields can no longer be incorrectly configured by site builders</a> for instructions on how to resolve this.<br>@errors', [
+            '@change_record_url' => 'https://www.drupal.org/node/3403257',
+            '@errors' => $renderer->renderInIsolation($errors_list),
+          ]),
+        ];
+      }
+    }
+  }
+  return $requirements;
+}

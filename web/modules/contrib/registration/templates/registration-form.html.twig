@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Two column template for the registration add/edit form.
+ *
+ * Available variables:
+ * - form: The form.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="layout-registration-form clearfix">
+  <div class="layout-region layout-region-registration-main">
+    {{ form|without('advanced', 'footer', 'actions') }}
+  </div>
+  <div class="layout-region layout-region-registration-secondary">
+    {{ form.advanced }}
+  </div>
+  <div class="layout-region layout-region-registration-footer">
+    <div class="layout-region-registration-footer__content">
+      {{ form.footer }}
+      {{ form.actions }}
+    </div>
+  </div>
+</div>

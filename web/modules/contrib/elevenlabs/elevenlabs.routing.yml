@@ -1,0 +1,7 @@
+elevenlabs.settings:
+  path: '/admin/config/system/eleven-labs-settings'
+  defaults:
+    _title: 'ElevenLabs Settings'
+    _form: 'Drupal\elevenlabs\Form\ElevenLabsSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

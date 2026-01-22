@@ -1,0 +1,153 @@
+.easy-carousel--simple {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.easy-carousel--simple .text-align-left {
+  text-align: left;
+}
+
+.easy-carousel--simple .text-align-center {
+  text-align: center;
+}
+
+.easy-carousel--simple .text-align-justify {
+  text-align: justify;
+}
+
+.easy-carousel--simple .text-align-right {
+  text-align: right;
+}
+
+.easy-carousel--simple .text-position-flex-start {
+  justify-content: flex-start;
+}
+
+.easy-carousel--simple .text-position-center {
+  justify-content: center;
+}
+
+.easy-carousel--simple .text-position-flex-end {
+  justify-content: flex-end;
+}
+
+.easy-carousel--simple .list {
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  /* Hide scrollbar in Firefox */
+  scrollbar-width: none;
+  /* Hide scrollbar in IE and Edge */
+  -ms-overflow-style: none;
+}
+
+.easy-carousel--simple .list ::-webkit-scrollbar {
+  display: none;
+}
+
+.easy-carousel--simple .list .item {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+  scroll-snap-align: center;
+  display: block;
+}
+
+.easy-carousel--simple .list .item iframe {
+  height: 100%;
+  width: 100%;
+}
+
+.easy-carousel--simple .list .item .slide-image {
+  z-index: 0;
+  width: 100%;
+  position: relative;
+  width: 100%;
+  height: 150px;
+  background: url(data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAARMAAAC3CAMAAAAGjUrGAAAAM1BMVEXExMT////BwcHo6Oju7u7Y2Nj5+fn09PTJycn8/PzPz8/GxsbU1NTMzMzl5eXp6enf3984nfntAAADJ0lEQVR4nO3cjZKaMBRAYYiIIL/v/7SLii6SEEGJeC/n60yn0+q4OcUAUYgiAAAAAAAAAAAAAAAAAAAAAAAA4OcZU1VZIFVhzNbjW84UzSkOJ0/arUe4mDnmAYtcpWdZm4o5hi7Syc9bD3MJU34hSRcl23qgS4ScSgaSrcc531feOVfl1kOdrbhvJskhkKR/gaOYabZIbz9xbYJphDY5hXuF+7uTJv9oYqOJTVGT1U7ctDQporJts6JY4xVUNDFZk1/+Nk9P5QrjMK38Jk+nycnnpykKtpP7f2sv/TiK/CajJN2/fBpFfBPHysGnu2nxTVwrB9VnryC+ydlOEjefDUZ6E3NwNElfHqZ4Ryu+iXPR7eVq0MG3BC2+SfJOkzrOPVF22aSOY18U8U3eeO/cpqDpKOKbuFasvXPsY1aejCK9SeT6sMe3Lx7sqKaiiG/iOmbzfYTXDB43EUV+E/ugrfY8u3l6pDuK/CbXvciQ7/O7ZvRYZxQFTUZRkumzHceO2xVFQ5OoHKwp1Z5jMdexjCOKiiYmK28zbVpnnnE4D++6GXn8FBVNLud0VZF1vzwbyTl1J7G3FCVNXppO0kUZLWzvpImpppNYUfbRxFQvvgD3FGUXTV4meY6yhya+ueRhEEBfE/twY06S4YGNuiamHe9F5iUZnCZpa2Lq8YTp3eM8OfTPU9bEXM99BlFmTK9WFGVN+tPBR5RFSe5ziqom5nGG3EeZPZf0EnVNzGDR4BplaRJ9TczTOkoXZXESdU3MaL2tXDiXKGwyThLH4++l7K+JleQdqpo4v16w7ybZxLLijptkS/cv+puslkRPk/knebtpUq14eaCSJituJVqauL+nRBOa0MRGExtNbDSx0cRGExtNbDSxjZo0aXq6SB+/vf/HVOHnOyuhiY0mNprY5DYJ9wOLbRKfw907SN79Cvq1xjQJJpfWxLoWP5hWTJMoC36zx5vXVyn/DvvT8jDk3LLuYnxlUhC+q8V+0ReiSEsSRcdVT4dtibDbx14YkxVtE+Z2j01b+K6M+mnhjtm2HhkAAAAAAAAAAAAAAAAAAAAAAAAAAN/0B81WMJZb1X1AAAAAAElFTkSuQmCC) center center/contain no-repeat;
+  background-color: #c4c4c4;
+}
+
+.easy-carousel--simple .list .item .slide-image img {
+  width: 100%;
+}
+
+.easy-carousel--simple .list .item .slide-content {
+  padding: 20px 15% 30px 15%;
+}
+
+.easy-carousel--simple .list .item .slide-content a {
+  color: inherit;
+}
+
+.easy-carousel--simple .list .item .slide-content .slide-title {
+  margin-bottom: 20px;
+  font-size: clamp(16px, 4vw, 48px);
+}
+
+.easy-carousel--simple .list .item .slide-content .slide-text {
+  font-size: clamp(12px, 2vw, 20px);
+}
+
+.easy-carousel--simple .list .item .slide-content .slide-link {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+.easy-carousel--simple .indicators {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: transparent;
+  bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.easy-carousel--simple .indicators .indicator {
+  height: 20px;
+  width: 20px;
+  margin: 0 5px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  background-color: transparent;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.easy-carousel--simple .indicators .indicator.active {
+  background: white;
+}
+
+.easy-carousel--simple .carousel-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.easy-carousel--simple .carousel-control.prev {
+  left: 10px;
+}
+
+.easy-carousel--simple .carousel-control.next {
+  right: 10px;
+}

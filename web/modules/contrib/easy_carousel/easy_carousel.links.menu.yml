@@ -1,0 +1,57 @@
+easy_carousel.main_content:
+  title: 'Easy Carousel'
+  parent: system.admin_content
+  route_name: system.admin_content
+
+easy_carousel.main_settings:
+  title: 'Easy Carousel'
+  parent: system.admin_structure
+  route_name: system.admin_structure
+
+easy_carousel.main_import:
+  title: 'Import'
+  description: 'Import all carousels.'
+  parent: easy_carousel.main_content
+  route_name: easy_carousel.import_form
+  weight: 2
+
+easy_carousel.main_export:
+  title: 'Export'
+  description: 'Export all carousels.'
+  parent: easy_carousel.main_content
+  route_name: easy_carousel.export_form
+  weight: 3
+
+entity.carousel.settings:
+  title: 'Carousels'
+  description: 'Configure a Carousel entity type.'
+  route_name:  entity.carousel.settings
+  parent: easy_carousel.main_settings
+
+entity.carousel.collection:
+  title: 'Carousels'
+  description: 'List of carousels.'
+  route_name: entity.carousel.collection
+  parent: easy_carousel.main_content
+  weight: 0
+
+entity.carousel_item.settings:
+  title: 'Slides'
+  description: 'Configure a Carousel Slide entity type.'
+  route_name:  entity.carousel_item.settings
+  parent: easy_carousel.main_settings
+
+entity.carousel_item.collection:
+  title: 'Slides'
+  description: 'List of carousel slides.'
+  route_name: entity.carousel_item.collection
+  parent: easy_carousel.main_content
+  weight: 1
+
+# easy_carousel.import_export_form:
+#   title: 'Import/Export'
+#   description: 'Import/Export all carousels.'
+#   parent: easy_carousel.main_content
+#   route_name: easy_carousel.main_content
+#   #weight: 10
+

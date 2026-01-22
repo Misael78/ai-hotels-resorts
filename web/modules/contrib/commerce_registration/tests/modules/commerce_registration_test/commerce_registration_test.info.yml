@@ -1,0 +1,11 @@
+name: Commerce Registration Test
+type: module
+description: 'Test module for Commerce Registration.'
+package: Testing
+dependencies:
+  - commerce_registration:commerce_registration
+
+# Information added by Drupal.org packaging script on 2025-03-30
+version: '3.4.0'
+project: 'commerce_registration'
+datestamp: 1743342963

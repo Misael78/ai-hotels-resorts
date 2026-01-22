@@ -1,0 +1,6 @@
+configure chatpgpt plugin:
+  title: 'Administer ChatGPT plugin configuration'
+access chatgpt search form:
+  title: 'Access ChatGPT search form'
+access chatgpt translation:
+  title: 'Access ChatGPT Translation'

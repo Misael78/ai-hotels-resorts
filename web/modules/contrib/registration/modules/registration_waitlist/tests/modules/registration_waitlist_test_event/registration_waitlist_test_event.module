@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Provides hooks for registration wait list event tests.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function registration_waitlist_test_event_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  $fields = [];
+  // Add a base registration field to node entities.
+  if ($entity_type->id() === 'node') {
+    $default_settings = [
+      'status' => [
+        'value' => TRUE,
+      ],
+      'capacity' => [
+        0 => [
+          'value' => 5,
+        ],
+      ],
+      'maximum_spaces' => [
+        0 => [
+          'value' => 5,
+        ],
+      ],
+      'from_address' => [
+        0 => [
+          'value' => 'test@example.com',
+        ],
+      ],
+      'registration_waitlist_enable' => [
+        'value' => TRUE,
+      ],
+      'registration_waitlist_capacity' => [
+        0 => [
+          'value' => 10,
+        ],
+      ],
+      'multiple_registrations' => [
+        'value' => TRUE,
+      ],
+      'registration_waitlist_autofill' => [
+        'value' => TRUE,
+      ],
+      'registration_waitlist_autofill_state' => [
+        0 => [
+          'value' => 'complete',
+        ],
+      ],
+    ];
+    $fields['event_registration'] = BaseFieldDefinition::create('registration')
+      ->setLabel(t('Registration'))
+      ->setDefaultValue([
+        'registration_settings' => serialize($default_settings),
+      ]);
+  }
+  return $fields;
+}

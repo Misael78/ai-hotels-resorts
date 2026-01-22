@@ -1,0 +1,5 @@
+name: 'Image Style Preview'
+type: module
+description: 'Provides previews for image styles'
+core: 8.x
+package: 'Media'

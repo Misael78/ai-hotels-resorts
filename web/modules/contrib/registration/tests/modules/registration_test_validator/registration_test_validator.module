@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Test module for registration validation.
+ */
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function registration_test_validator_entity_type_alter(array &$entity_types) {
+  $entity_types['node']->addConstraint('Constraint4');
+}

@@ -1,0 +1,92 @@
+[id^='appointment-wrapper'] {
+  --wbooking-color-selected: #4d616f;
+  --wbooking-color-light: #bde2ff;
+  --wbooking-color-light-hover: #98b8d1;
+  --wbooking-light-gray: lightgray;
+  --wbooking-error: red;
+}
+
+[id^='selected-slot'].hide{
+  display: none;
+}
+
+[id^='appointment-wrapper'] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3vw;
+  margin: 10px 0;
+
+  & [id^='calendar-container'] {
+    & [id^='month-select'] {
+      display: block;
+      margin: 5px auto;
+    }
+    & .week-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+    }
+    & .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 10px;
+
+      & .calendar-day {
+        font-size: 15px;
+        color: var(--wbooking-light-gray);
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-align: center;
+
+        &.available{
+          color: black;
+          background-color: var(--wbooking-color-light);
+          cursor: pointer;
+          &:hover {
+            background-color: var(--wbooking-color-light-hover);
+          }
+        }
+        &.active{
+          color: white;
+          background-color: var(--wbooking-color-selected);
+        }
+      }
+    }
+  }
+
+  & [id^='slots-container'] {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 300px;
+    gap: 5px;
+
+    & .calendar-slot{
+      padding: 5px 10px;
+      border: 1px solid var(--wbooking-light-gray);
+      text-align: center;;
+      &:hover {
+        background-color: var(--wbooking-color-light);
+      }
+      &.available{
+        cursor: pointer;
+      }
+      &.unavailable{
+        background-color: var(--wbooking-light-gray);
+      }
+      &.selected{
+        background-color: var(--wbooking-color-selected);
+        color: white;
+      }
+    }
+
+    &.highlight{
+      border: 1px dashed var(--wbooking-error)
+    }
+  }
+}

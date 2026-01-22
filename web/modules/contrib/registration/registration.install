@@ -1,0 +1,224 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Registration module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Adds a canceled state to the default registration workflow.
+ */
+function registration_update_9001() {
+  $storage = \Drupal::entityTypeManager()->getStorage('workflow');
+  if ($workflow = $storage->load('registration')) {
+    // Re-saving the workflow adds the canceled flag to each state.
+    $workflow->save();
+  }
+}
+
+/**
+ * Changes the maximum spaces setting to allow zero (unlimited) value.
+ */
+function registration_update_9002() {
+  $entity_definition_update_manager = \Drupal::service('entity.definition_update_manager');
+  if ($field_definition = $entity_definition_update_manager->getFieldStorageDefinition('maximum_spaces', 'registration_settings')) {
+    $field_definition->setSetting('min', 0);
+    $entity_definition_update_manager->updateFieldStorageDefinition($field_definition);
+  }
+}
+
+/**
+ * Adds a completed timestamp base field to the registration entity.
+ */
+function registration_update_9003() {
+  $field_storage_definition = BaseFieldDefinition::create('timestamp')
+    ->setLabel(t('Completed'))
+    ->setDescription(t('The time when the registration was completed.'))
+    ->setTranslatable(TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('completed', 'registration', 'registration', $field_storage_definition);
+}
+
+/**
+ * Updates permissions for maintaining registration settings.
+ */
+function registration_update_9004() {
+  $message = FALSE;
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+  $types = \Drupal::entityTypeManager()->getStorage('registration_type')->loadMultiple();
+  foreach ($types as $type => $entity) {
+    foreach ($roles as $role) {
+      if (!$role->isAdmin() && $role->hasPermission("administer $type registration")) {
+        $role->revokePermission("administer $type registration");
+        $role->grantPermission("administer $type registration settings");
+        $role->save();
+        $message = TRUE;
+      }
+      if (!$role->isAdmin() && $role->hasPermission("administer own $type registration")) {
+        $role->revokePermission("administer own $type registration");
+        $role->grantPermission("administer own $type registration settings");
+        $role->save();
+        $message = TRUE;
+      }
+    }
+  }
+
+  if ($message) {
+    \Drupal::messenger()->addMessage(t('Permissions for maintaining registration settings were updated for one or more roles. Please view the change record at https://www.drupal.org/node/3402602 for more information about changes to permissions in this release. You should export your configuration after this update completes.'));
+  }
+}
+
+/**
+ * Adds the "allowed types" field setting to registration fields.
+ */
+function registration_update_9005() {
+  $types = \Drupal::entityTypeManager()->getStorage('registration_type')->loadMultiple();
+  $allowed_type_keys = array_keys($types);
+  if (!empty($allowed_type_keys)) {
+    $allowed_types = array_combine($allowed_type_keys, $allowed_type_keys);
+    $field_definitions = \Drupal::service('registration.manager')->getRegistrationFieldDefinitions();
+    foreach ($field_definitions as $field_definition) {
+      $field_definition->setSetting('allowed_types', $allowed_types);
+      $field_definition->save();
+    }
+  }
+}
+
+/**
+ * Adds global setting for limiting registration field values by role.
+ */
+function registration_update_9006() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration.settings')
+    ->set('limit_field_values', FALSE)
+    ->save();
+}
+
+/**
+ * Re-saves all roles so dependencies are added.
+ */
+function registration_update_9007() {
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+  foreach ($roles as $role) {
+    $role->save();
+  }
+}
+
+/**
+ * Adds the hide_single_state setting to state fields on registration forms.
+ */
+function registration_update_10001() {
+  $form_displays = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->loadByProperties([
+      'targetEntityType' => 'registration',
+    ]);
+  foreach ($form_displays as $form_display) {
+    $components = $form_display->getComponents();
+    foreach ($components as $field_name => $component) {
+      if ($component['type'] == 'registration_state_default') {
+        $form_display->setComponent($field_name, [
+          'settings' => [
+            // The default is TRUE, but set to FALSE for BC reasons, since the
+            // previous behavior was to show the field even if there was only
+            // a single state available to select from.
+            'hide_single_state' => FALSE,
+          ],
+        ] + $component)->save();
+      }
+    }
+  }
+}
+
+/**
+ * Changes the field widget for spaces fields on registration forms.
+ */
+function registration_update_10002() {
+  $form_displays = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->loadByProperties([
+      'targetEntityType' => 'registration',
+    ]);
+  foreach ($form_displays as $form_display) {
+    $components = $form_display->getComponents();
+    foreach ($components as $field_name => $component) {
+      if (($field_name == 'count') && ($component['type'] == 'number')) {
+        $form_display->setComponent($field_name, [
+          'type' => 'registration_spaces_default',
+          'settings' => [
+            // Hide the Spaces field unless the user can register for more than
+            // one space.
+            'hide_single_space' => TRUE,
+          ],
+        ] + $component)->save();
+      }
+    }
+  }
+}
+
+/**
+ * Adds a setting for the email broadcast form.
+ */
+function registration_update_10003() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration.settings')
+    // The default for new installs is TRUE, but set to FALSE for BC reasons.
+    ->set('broadcast_filter', FALSE)
+    ->save();
+}
+
+/**
+ * Adds a setting for mail handling.
+ */
+function registration_update_10004() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration.settings')
+    ->set('replace_from_header', FALSE)
+    ->save();
+}
+
+/**
+ * Grant "administer own $type settings" to users with "administer own $type".
+ */
+function registration_update_10005() {
+  $bundle_info = \Drupal::service('entity_type.bundle.info')->getBundleInfo('registration');
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+  foreach ($roles as $role) {
+    $changed = FALSE;
+    $permissions = $role->getPermissions();
+    foreach ($bundle_info as $bundle => $info) {
+      $admin_perm = "administer own {$bundle} registration";
+      $manage_perm = "administer own {$bundle} registration settings";
+      if (in_array($admin_perm, $permissions) && !in_array($manage_perm, $permissions)) {
+        $role->grantPermission($manage_perm);
+        $changed = TRUE;
+      }
+    }
+    if ($changed) {
+      $role->save();
+    }
+  }
+}
+
+/**
+ * Adds a setting for edit access to registrations of disabled hosts.
+ */
+function registration_update_10006() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration.settings')
+    ->set('prevent_edit_disabled', TRUE)
+    ->save();
+}
+
+/**
+ * Adds a setting to control the register access check.
+ */
+function registration_update_10007() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration.settings')
+    ->set('lenient_access_check', TRUE)
+    ->save();
+}

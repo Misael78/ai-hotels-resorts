@@ -1,0 +1,20 @@
+{
+  "name": "drupal/elevenlabs",
+  "description": "Connect to the ElevenLabs service through the AI suite.",
+  "authors": [
+    {
+      "name": "Marcus Johansson",
+      "email": "me@marcusmailbox.com"
+    },
+    {
+      "name": "Paul Sheldrake",
+      "email": "paul.sheldrake@gmail.com"
+    }
+  ],
+  "license": "GPL-2.0-or-later",
+  "type": "drupal-module",
+  "require": {
+    "drupal/ai": "^1.0.5",
+    "drupal/key": "^1.18"
+  }
+}

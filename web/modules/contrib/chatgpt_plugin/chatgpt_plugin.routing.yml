@@ -1,0 +1,28 @@
+chatgpt_plugin.search_form:
+  path: '/chatgpt/search_form/{fieldName}'
+  defaults:
+    _form: '\Drupal\chatgpt_plugin\Form\ChatGPTForm'
+    _title: 'ChatGPT Content Generator'
+  requirements:
+    _permission: 'access chatgpt search form'
+chatgpt_plugin.admin_settings:
+  path: '/admin/config/chatgpt'
+  defaults:
+    _form: '\Drupal\chatgpt_plugin\Form\ChatGPTConfigForm'
+    _title: 'OpenAI configuration'
+  requirements:
+    _permission: 'configure chatpgpt plugin'
+chatgpt_plugin.translate_content:
+  path: '/chatgpt/translate/{lang_code}/{lang_name}/{node_id}'
+  defaults:
+    _controller: '\Drupal\chatgpt_plugin\Controller\ChatGPTTranslateController::translate'
+    _title: 'ChatGPT Translation'
+  requirements:
+    _permission: 'access chatgpt translation'
+chatgpt_plugin.chatgpt_assist_tool:
+  path: '/admin/config/chatgpt_assist_tool'
+  defaults:
+    _form: '\Drupal\chatgpt_plugin\Form\ChatGPTAssistToolForm'
+    _title: 'OpenAI Assistance Tool'
+  requirements:
+    _permission: 'access chatgpt search form'

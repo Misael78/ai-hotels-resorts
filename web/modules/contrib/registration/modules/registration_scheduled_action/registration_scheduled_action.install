@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for Registration Scheduled Action.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function registration_scheduled_action_uninstall() {
+  // Cleanup key value entries that were added by the module. Although they will
+  // eventually expire, that could be far in the future depending on the plugin,
+  // so remove them immediately here.
+  $keyvalue_factory = \Drupal::service('keyvalue.expirable');
+  $action_manager = \Drupal::service('plugin.manager.action');
+  $plugins = $action_manager->getDefinitionsByType('registration');
+  foreach ($plugins as $id => $plugin_definition) {
+    $interfaces = class_implements($plugin_definition['class']);
+    if (isset($interfaces['Drupal\registration_scheduled_action\Action\QueryableActionInterface'])) {
+      $plugin = $action_manager->createInstance($id);
+      $collection = $plugin->getKeyValueStoreCollectionName();
+      $keyvalue_store = $keyvalue_factory->get($collection);
+      $keyvalue_store->deleteAll();
+    }
+  }
+}

@@ -1,0 +1,13 @@
+name: Registration Inline Entity Form
+type: module
+description: 'Provides integration with the Inline Entity Form module.'
+package: Registration
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - inline_entity_form:inline_entity_form
+  - registration:registration
+
+# Information added by Drupal.org packaging script on 2025-07-26
+version: '3.4.4'
+project: 'registration'
+datestamp: 1753536113

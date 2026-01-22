@@ -1,0 +1,4 @@
+administer feedback ai:
+  title: 'Administer feedback AI'
+  description: Control the main config settings and view submission of feedback AI.
+  'restrict access': TRUE

@@ -1,0 +1,5 @@
+chatgpt_plugin.chatgpt_tool:
+  title: 'OpenAI Content Assistance Tool'
+  description: 'OpenAI Assistance Tool for different content usecases.'
+  route_name: chatgpt_plugin.chatgpt_assist_tool
+  base_route: system.admin_content

@@ -1,0 +1,339 @@
+<?php
+
+/**
+ * @file
+ * Provides integration with the Commerce and Entity Registration modules.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\commerce_registration\Plugin\migrate\source\Registration;
+use Drupal\commerce_registration\Render\Element\Link;
+use Drupal\registration\Entity\RegistrationInterface;
+use Drupal\registration\Entity\RegistrationTypeInterface;
+
+/**
+ * Implements hook_preprocess_commerce_order().
+ */
+function commerce_registration_preprocess_commerce_order(&$variables) {
+  /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
+  $order = $variables['elements']['#commerce_order'];
+
+  // Add registrations to the order display if any exist for this order.
+  $registrations = \Drupal::entityTypeManager()
+    ->getStorage('registration')
+    ->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('order_id', $order->id())
+    ->execute();
+
+  if (!empty($registrations)) {
+    $variables['order']['registrations'] = [
+      '#type' => 'view',
+      '#name' => 'commerce_order_registrations',
+      '#display_id' => 'default',
+      '#arguments' => [$order->id()],
+      '#embed' => TRUE,
+      '#title' => t('Order registrations'),
+    ];
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_registration_theme($existing, $type, $theme, $path) {
+  // Template overrides that include order registrations.
+  return [
+    'commerce_order__admin' => [
+      'template' => 'commerce-order--admin',
+    ],
+    'commerce_order__user' => [
+      'template' => 'commerce-order--user',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function commerce_registration_entity_type_alter(array &$entity_types) {
+  // Add a validation constraint to the field storage config entity type.
+  $entity_types['field_storage_config']->addConstraint('PreventProductTypeRegistrationField');
+  // Override the register form.
+  $entity_types['registration']->setFormClass('register', 'Drupal\commerce_registration\Form\RegisterForm');
+}
+
+/**
+ * Implements hook_entity_access().
+ */
+function commerce_registration_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  $access_result = AccessResult::neutral();
+
+  // Delete registration access.
+  if (($entity instanceof RegistrationInterface) && ($operation == 'delete')) {
+    if (!$entity->get('order_id')->isEmpty() && !$entity->isCanceled()) {
+      $access_result = AccessResult::forbidden("Cannot delete a registration that is in use by an order.");
+    }
+
+    $access_result->addCacheableDependency($entity);
+  }
+
+  // Manage product registrations access. Only grant access if the route check
+  // explicitly allows it, otherwise products without variations configured for
+  // registration would get an entity operation that gives access denied.
+  if (($entity instanceof ProductInterface) && ($operation == 'manage registrations')) {
+    $access_manager = \Drupal::service('access_manager');
+    $access_result = $access_manager->checkNamedRoute('entity.commerce_product.commerce_registration.manage_registrations', [
+      'commerce_product' => $entity->id(),
+    ], $account, TRUE);
+    if ($access_result->isNeutral()) {
+      $access_result = AccessResult::forbidden("The product has no variations configured for registration.");
+    }
+
+    $access_result->addCacheableDependency($entity);
+  }
+
+  return $access_result;
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function commerce_registration_entity_delete(EntityInterface $entity) {
+  // Custom modules can use hook_ENTITY_TYPE_delete to perform different
+  // processing, since that hook is called first. For example, that hook
+  // can be used to delete registrations referenced by an order instead of
+  // simply removing the reference as is done here.
+  if ($entity instanceof OrderInterface) {
+    // When an order is deleted, remove any references to it from registrations.
+    $storage = \Drupal::entityTypeManager()->getStorage('registration');
+    $registrations = $storage->loadByProperties([
+      'order_id' => $entity->id(),
+    ]);
+    if (!empty($registrations)) {
+      foreach ($registrations as $registration) {
+        $registration->set('order_id', NULL);
+        $registration->save();
+      }
+    }
+  }
+
+  // Delete registrations referenced by an order item being deleted from
+  // a cart, unless the registration is already complete. There is a cart
+  // subscriber that handles cart item removals, but modules can delete
+  // items from a cart programmatically without invoking the cart manager.
+  // Further, the order item can be deleted as a result of the order being
+  // deleted, which occurs as part of abandoned cart deletion.
+  // @see \Drupal\commerce_registration\EventSubscriber\CartEventSubscriber
+  elseif ($entity instanceof OrderItemInterface && !$entity->get('registration')->isEmpty()) {
+    $order = $entity->getOrder();
+    // The order is NULL if the order item was deleted as a result of
+    // the cart being deleted.
+    // @see Order::postDelete()
+    if ($order === NULL || !empty($order->cart->value)) {
+      $registrations = $entity->get('registration')->referencedEntities();
+      foreach ($registrations as $registration) {
+        if (!$registration->isComplete()) {
+          $registration->delete();
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function commerce_registration_entity_insert(EntityInterface $entity) {
+  // If we are currently importing configuration we expect it to be complete and
+  // therefore we should not try to create configuration here as if we do and
+  // that configuration is also part of the import then the import will fail
+  // with 'Deleted and replaced configuration entity
+  // "core.entity_view_display.registration.NAME.summary"'.
+  /** @var \Drupal\Core\Config\ConfigInstallerInterface $config_installer */
+  $config_installer = \Drupal::service('config.installer');
+  if ($config_installer->isSyncing()) {
+    return;
+  }
+
+  if ($entity instanceof RegistrationTypeInterface) {
+    if (EntityViewMode::load('registration.summary')) {
+      // Create a summary view for new registration types.
+      $display = EntityViewDisplay::create([
+        'targetEntityType' => 'registration',
+        'bundle' => $entity->id(),
+        'mode' => 'summary',
+        'status' => TRUE,
+      ]);
+      if ($display) {
+        // Hide all fields by default except for certain summary fields.
+        // The fields that are shown in the summary will be displayed in
+        // the order indicated in this array.
+        $show_in_summary = [
+          'mail',
+          'count',
+        ];
+        $components = $display->getComponents();
+        foreach ($components as $name => $component) {
+          if (($key = array_search($name, $show_in_summary)) !== FALSE) {
+            $component['weight'] = $key;
+            $display->setComponent($name, $component);
+          }
+          else {
+            $display->removeComponent($name);
+          }
+        }
+
+        $display->save();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function commerce_registration_entity_operation(EntityInterface $entity): array {
+  $operations = [];
+  if (($entity instanceof ProductInterface) && $entity->access('manage registrations')) {
+    $operations['manage'] = [
+      'title' => t('Manage registrations'),
+      'url' => Url::fromRoute('entity.commerce_product.commerce_registration.manage_registrations', [
+        'commerce_product' => $entity->id(),
+      ]),
+      'query' => ['destination' => NULL],
+      'weight' => 30,
+    ];
+  }
+  return $operations;
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function commerce_registration_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+  if ($entity_type->id() === 'commerce_order_item') {
+    // Add a registration reference to commerce order items.
+    $fields['registration'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Registration'))
+      ->setDescription(t('The registrations associated with the item, if any.'))
+      ->setSetting('target_type', 'registration')
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
+  }
+  if ($entity_type->id() === 'registration') {
+    // Add an order reference to registrations.
+    $fields['order_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Order'))
+      ->setDescription(t('The order associated with this registration, if any.'))
+      ->setSetting('target_type', 'commerce_order')
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+  }
+  return $fields;
+}
+
+/**
+ * Implements hook_migration_plugins_alter().
+ */
+function commerce_registration_migration_plugins_alter(array &$migrations) {
+  foreach ($migrations as $key => &$migration) {
+    // Do not alter a migration that is already configured.
+    if (strstr($key, 'migration_config_deriver:')) {
+      continue;
+    }
+
+    // Add the order ID field to registration migrations.
+    if ($migration['source']['plugin'] == 'd7_registration') {
+      $migration['process']['order_id'] = [
+        'plugin' => 'get',
+        'source' => 'order_id',
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_migrate_source_info_alter().
+ */
+function commerce_registration_migrate_source_info_alter(&$definitions) {
+  // Extend the registration migration source.
+  if (isset($definitions['d7_registration'])) {
+    $definitions['d7_registration']['class'] = Registration::class;
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function commerce_registration_element_info_alter(array &$info) {
+  // Prerender links so commerce product registration settings links render.
+  array_unshift($info['link']['#pre_render'], [Link::class, 'preRender']);
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function commerce_registration_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Rebuild the add to cart form if related registration settings change,
+  // since the list of enabled variations may also change as a result.
+  $product = $form_state->get('product');
+  if ($product instanceof ProductInterface) {
+    $renderer = \Drupal::service('renderer');
+    $handler = \Drupal::entityTypeManager()->getHandler('commerce_product_variation', 'registration_host_entity');
+    $variations = $product->getVariations();
+    foreach ($variations as $variation) {
+      $host_entity = $handler->createHostEntity($variation);
+      if ($host_entity->isConfiguredForRegistration()) {
+        if ($settings = $host_entity->getSettings()) {
+          if ($settings->isNew()) {
+            $settings->save();
+          }
+          $renderer->addCacheableDependency($form, $settings);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function commerce_registration_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $view = $form_state->get('view');
+  if (($view->id() == 'manage_commerce_registrations') && !empty($view->args)) {
+    // Hide the manage registrations email filter when there are only a few
+    // rows.
+    $commerce_registration_manager = \Drupal::service('commerce_registration.manager');
+    if ($product_id = $commerce_registration_manager->getProductIdFromArgument($view->args[0])) {
+      $storage = \Drupal::entityTypeManager()->getStorage('commerce_product');
+      /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
+      if ($product = $storage->load($product_id)) {
+        $registration_count = 0;
+        $handler = \Drupal::entityTypeManager()->getHandler('commerce_product_variation', 'registration_host_entity');
+        foreach ($product->getVariations() as $variation) {
+          $host_entity = $handler->createHostEntity($variation);
+          $registration_count += $host_entity->getRegistrationCount();
+        }
+
+        $config = \Drupal::config('registration.settings');
+        if ($registration_count < $config->get('hide_filter')) {
+          $form['mail']['#access'] = FALSE;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+hotel_ai.settings:
+  path: '/admin/config/content/ai/hotel'
+  defaults:
+    _form: '\Drupal\hotel_ai\Form\HotelAISettingsForm'
+    _title: 'Hotel AI Settings'
+  requirements:
+    _permission: 'administer site configuration'

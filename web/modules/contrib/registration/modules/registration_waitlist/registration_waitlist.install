@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for Registration Wait List.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Adds wait list related configuration when the module is installed.
+ */
+function registration_waitlist_install() {
+  // Add a waitlist state to the default registration workflow.
+  $storage = \Drupal::entityTypeManager()->getStorage('workflow');
+  if ($workflow = $storage->load('registration')) {
+    $workflow_type = $workflow->getTypePlugin();
+    $configuration = $workflow_type->getConfiguration();
+    $configuration['states']['waitlist'] = [
+      'label' => 'Wait list',
+      'active' => FALSE,
+      'canceled' => FALSE,
+      'held' => FALSE,
+      'show_on_form' => TRUE,
+      'description' => 'Special state for registrations after capacity is reached.',
+      'weight' => 10,
+    ];
+    $configuration['transitions']['complete']['from'][] = 'waitlist';
+    $configuration['transitions']['cancel']['from'][] = 'waitlist';
+    $workflow_type->setConfiguration($configuration);
+    $workflow->save();
+  }
+
+  // Add wait list autofill settings to existing registration types.
+  $registration_types = \Drupal::entityTypeManager()->getStorage('registration_type')->loadMultiple();
+  foreach ($registration_types as $registration_type) {
+    $registration_type->setThirdPartySetting('registration_waitlist', 'autofill_sort_field', 'registration_id');
+    $registration_type->setThirdPartySetting('registration_waitlist', 'autofill_sort_order', 'ASC');
+    $registration_type->save();
+  }
+}
+
+/**
+ * Add autofill fields to the registration settings entity.
+ */
+function registration_waitlist_update_9001() {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $storage_definition = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Autofill available spots'))
+    ->setDescription(t('Automatically fill newly available spots in standard capacity from the wait list.'))
+    ->setRequired(FALSE)
+    ->setDefaultValue(FALSE);
+
+  $update_manager
+    ->installFieldStorageDefinition('registration_waitlist_autofill', 'registration_settings', 'registration_waitlist', $storage_definition);
+
+  $storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Autofill state'))
+    ->setDescription(t('The state that wait listed registrations should be placed in when slots become available.'))
+    ->setRequired(FALSE)
+    ->setSetting('max_length', 255);
+
+  $update_manager
+    ->installFieldStorageDefinition('registration_waitlist_autofill_state', 'registration_settings', 'registration_waitlist', $storage_definition);
+
+  $entity_display_repository = \Drupal::service('entity_display.repository');
+
+  $entity_display_repository
+    ->getFormDisplay('registration_settings', 'registration_settings', 'default')
+    ->setComponent('registration_waitlist_autofill', [
+      'type' => 'boolean_checkbox',
+      'region' => 'content',
+    ])
+    ->setComponent('registration_waitlist_autofill_state', [
+      'type' => 'registration_state_default',
+      'region' => 'content',
+    ])
+    ->save();
+}
+
+/**
+ * Add wait list autofill settings to existing registration types.
+ */
+function registration_waitlist_update_10001() {
+  $registration_types = \Drupal::entityTypeManager()->getStorage('registration_type')->loadMultiple();
+  foreach ($registration_types as $registration_type) {
+    $registration_type->setThirdPartySetting('registration_waitlist', 'autofill_sort_field', 'registration_id');
+    $registration_type->setThirdPartySetting('registration_waitlist', 'autofill_sort_order', 'ASC');
+    $registration_type->save();
+  }
+}

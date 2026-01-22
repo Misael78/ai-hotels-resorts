@@ -1,0 +1,10 @@
+services:
+  easy_carousel.video_utils:
+    class: Drupal\easy_carousel\Services\VideoUtils
+    arguments: ['@logger.factory', '@entity_type.manager']
+
+  easy_carousel.twig_extension:
+    class: Drupal\easy_carousel\EasyCarouselTwigExtension
+    arguments: ['@easy_carousel.video_utils']
+    tags:
+      - { name: twig.extension }

@@ -1,0 +1,21 @@
+# Schema for the configuration files of the Registration Administrative Overrides module.
+
+registration.type.*.third_party.registration_admin_overrides:
+  type: mapping
+  label: 'Administrative override settings'
+  mapping:
+    status:
+      label: 'Allow administrators to override the main enabled status'
+      type: boolean
+    maximum_spaces:
+      label: 'Allow administrators to exceed the maximum number of spaces allowed per registration'
+      type: boolean
+    capacity:
+      label: 'Allow administrators to exceed host entity capacity'
+      type: boolean
+    open:
+      label: 'Allow administrators to register before the open date'
+      type: boolean
+    close:
+      label: 'Allow administrators to register after the close date'
+      type: boolean

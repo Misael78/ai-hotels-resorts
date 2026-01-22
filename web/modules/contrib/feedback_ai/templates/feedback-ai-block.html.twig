@@ -1,0 +1,19 @@
+{#
+  Define a set of CSS classes to be added to the outer div.
+  This array can be modified to include any additional classes as needed.
+#}
+
+{%
+  set classes = [
+    'block',
+    'block-feedback-ai',
+  ]
+%}
+<div{{attributes.addClass(classes)}}>
+	{% if title %}
+		<h2{{title_attributes}}>{{ title }}</h2>
+	{% endif %}
+	<div{{content_attributes.addClass('block-content')}}>
+		{{ elements.content }}
+	</div>
+</div>

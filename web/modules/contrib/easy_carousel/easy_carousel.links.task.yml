@@ -1,0 +1,45 @@
+entity.carousel.settings:
+  title: 'Settings'
+  route_name: entity.carousel.settings
+  base_route: entity.carousel.settings
+entity.carousel.view:
+  title: 'View'
+  route_name: entity.carousel.canonical
+  base_route: entity.carousel.canonical
+entity.carousel.edit_form:
+  title: 'Edit'
+  route_name: entity.carousel.edit_form
+  base_route: entity.carousel.canonical
+entity.carousel.delete_form:
+  title: 'Delete'
+  route_name: entity.carousel.delete_form
+  base_route: entity.carousel.canonical
+  weight: 10
+entity.carousel.collection:
+  title: 'Carousels'
+  route_name: entity.carousel.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.carousel_item.settings:
+  title: 'Settings'
+  route_name: entity.carousel_item.settings
+  base_route: entity.carousel_item.settings
+entity.carousel_item.view:
+  title: 'View'
+  route_name: entity.carousel_item.canonical
+  base_route: entity.carousel_item.canonical
+entity.carousel_item.edit_form:
+  title: 'Edit'
+  route_name: entity.carousel_item.edit_form
+  base_route: entity.carousel_item.canonical
+entity.carousel_item.delete_form:
+  title: 'Delete'
+  route_name: entity.carousel_item.delete_form
+  base_route: entity.carousel_item.canonical
+  weight: 10
+entity.carousel_item.collection:
+  title: 'Carousel Items'
+  route_name: entity.carousel_item.collection
+  base_route: system.admin_content
+  weight: 10

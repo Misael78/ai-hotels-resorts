@@ -1,0 +1,4 @@
+hotel_ai_chain:
+  label: 'Hotel AI Room Generator'
+  service: 'hotel_ai.generator'
+  method: 'generateForRoom'

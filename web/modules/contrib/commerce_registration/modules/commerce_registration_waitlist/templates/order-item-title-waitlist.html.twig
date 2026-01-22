@@ -1,0 +1,15 @@
+{#
+/**
+ * @file
+ * Template for a commerce order item title with waiting list support.
+ *
+ * Available variables:
+ * - title: The product variation title.
+ * - order_item: The order item.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="waitlist-order-item-title">
+  {{ title }} {{ order_item|order_item_waitlist_indicator }}
+</div>

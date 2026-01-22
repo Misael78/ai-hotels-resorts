@@ -1,0 +1,31 @@
+feedback_ai.feedback_admin_config_openai:
+  path: '/admin/config/Feedback openai'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Feedback OpenAI'
+  requirements:
+    _permission: 'administer feedback ai'
+
+feedback_ai.feedback_api_settings:
+  path: '/admin/config/feedbackopenai/settings'
+  defaults:
+    _title: 'Feedback AI Settings'
+    _form: 'Drupal\feedback_ai\Form\FeedbackAiSettingForm'
+  requirements:
+    _permission: 'administer feedback ai'
+
+feedback_ai.content:
+  path: '/feedback-ai'
+  defaults:
+    _controller: '\Drupal\feedback_ai\Controller\FeedbackAIController::content'
+    _title: 'Feedback AI Form'
+  requirements:
+    _permission: 'access content'
+
+feedback_ai.modal:
+  path: '/feedback-price-structure'
+  defaults:
+    _controller: '\Drupal\feedback_ai\Controller\PriceModelController::modal'
+    _title: 'Price & Usage Structure'
+  requirements:
+    _permission: 'administer feedback ai'

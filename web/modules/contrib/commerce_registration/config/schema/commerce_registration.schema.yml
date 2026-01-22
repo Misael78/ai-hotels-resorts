@@ -1,0 +1,15 @@
+# Schema for the configuration files of the Commerce Registration module.
+
+field.widget.settings.commerce_registration_variation_title:
+  type: mapping
+  label: 'Product variation title (spaces available) widget settings'
+  mapping:
+    label_display:
+      type: boolean
+      label: 'Label display'
+    label_text:
+      type: label
+      label: 'Label text'
+    hide_single:
+      type: boolean
+      label: 'Hide if there''s only one product variation'

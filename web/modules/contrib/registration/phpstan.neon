@@ -1,0 +1,17 @@
+# Configuration file for PHPStan static code checking, see https://phpstan.org .
+
+parameters:
+
+  level: 1
+
+  ignoreErrors:
+    - "#^Unsafe usage of new static#"
+    - "#Drupal calls should be avoided in classes, use dependency injection instead#"
+    - "#always exists and is not nullable#"
+    - "#ContentEntityInterface but return statement is missing#"
+
+  excludePaths:
+    # See https://www.drupal.org/node/3436275
+    - modules/registration_scheduled_action/src/Element/DateTime.php
+    # See https://github.com/drush-ops/drush/pull/5902
+    - src/Drush/Commands/RegistrationSanitizeCommands.php

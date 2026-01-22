@@ -1,0 +1,10 @@
+name: 'Image Style Preview'
+type: module
+description: 'Provides previews for image styles'
+core_version_requirement: ^8.8 || ^9 || ^10 || ^11
+package: 'Media'
+
+# Information added by Drupal.org packaging script on 2024-11-19
+version: '8.x-1.4'
+project: 'imagestyles'
+datestamp: 1732035552

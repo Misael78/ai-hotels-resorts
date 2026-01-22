@@ -1,0 +1,25 @@
+# Schema for the theme setting configuration file of the Bootstrap 3 base theme.
+
+bootstrap3.settings:
+  type: theme_settings
+  label: 'Bootstrap 3 settings'
+  mapping:
+    schemas:
+      type: mapping
+      mapping:
+        bootstrap3:
+          type: integer
+    table_responsive:
+      type: integer
+    cdn_provider:
+      type: string
+    cdn_theme:
+      type: string
+    cdn_cache_ttl_versions:
+      type: integer
+    cdn_cache_ttl_themes:
+      type: integer
+    reset_http_request_cache:
+      type: string
+    table:
+      type: string

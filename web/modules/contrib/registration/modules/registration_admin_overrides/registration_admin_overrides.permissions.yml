@@ -1,0 +1,20 @@
+registration override status:
+  title: 'Override status'
+  description: 'Allow to override the main enabled status.'
+  restrict access: true
+registration override maximum spaces:
+  title: 'Override maximum spaces'
+  description: 'Allow to exceed the maximum number of spaces allowed per registration.'
+  restrict access: true
+registration override capacity:
+  title: 'Override capacity'
+  description: 'Allow to exceed host entity capacity.'
+  restrict access: true
+registration override open:
+  title: 'Override open'
+  description: 'Allow to register before the open date.'
+  restrict access: true
+registration override close:
+  title: 'Override close'
+  description: 'Allow to register after the close date.'
+  restrict access: true

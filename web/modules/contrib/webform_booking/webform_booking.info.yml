@@ -1,0 +1,13 @@
+name: Webform Booking
+type: module
+description: 'Provides a custom webform element for scheduling appointments.'
+package: Webform
+core_version_requirement: ^9 || ^10 || ^11
+dependencies:
+  - drupal:webform
+  - drupal:webform_ui
+
+# Information added by Drupal.org packaging script on 2024-09-17
+version: '1.0.13'
+project: 'webform_booking'
+datestamp: 1726568946

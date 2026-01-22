@@ -1,0 +1,7 @@
+administer carousel:
+  title: 'Administer carousels'
+  restrict access: true
+
+administer carousel_item:
+  title: 'Administer carousel items'
+  restrict access: true

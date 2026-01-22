@@ -1,0 +1,8 @@
+services:
+  registration_change_host.manager:
+    class: Drupal\registration_change_host\RegistrationChangeHostManager
+    arguments: ['@event_dispatcher', '@entity_type.manager', '@database', '@entity_field.manager']
+
+  registration_change_host.logger:
+    parent: logger.channel_base
+    arguments: ['registration_change_host']

@@ -1,0 +1,5 @@
+entity.registration_scheduled_action.add_form:
+  route_name: entity.registration_scheduled_action.add_form
+  title: 'Add scheduled action'
+  appears_on:
+    - entity.registration_scheduled_action.collection

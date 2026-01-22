@@ -1,0 +1,3 @@
+bypass cancel by access:
+  title: 'Bypass the "cancel by" date'
+  description: 'Allows the user to cancel registrations after the "cancel by" date.'

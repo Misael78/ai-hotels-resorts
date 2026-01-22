@@ -1,0 +1,13 @@
+name: 'ECA Commerce'
+type: module
+description: 'Integrate ECA with the Commerce module and its plugins.'
+core_version_requirement: ^10.4 || ^11.2
+package: ECA
+dependencies:
+  - eca:eca (^2.1.11 || ^3)
+  - commerce:commerce (^2 || ^3)
+
+# Information added by Drupal.org packaging script on 2025-08-15
+version: '2.1.1'
+project: 'eca_commerce'
+datestamp: 1755247603

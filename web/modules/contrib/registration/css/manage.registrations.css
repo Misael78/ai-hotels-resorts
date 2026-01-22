@@ -1,0 +1,17 @@
+/**
+ * @file
+ * Styles for the manage registrations list.
+ */
+
+.view-manage-registrations .views-exposed-form .form-item {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.view-manage-registrations .views-exposed-form .form-actions {
+  clear: none;
+}
+
+.view-manage-registrations .views-exposed-form .form-submit {
+  margin-top: 1.5em;
+}

@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Provides hooks for commerce registration tests.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function commerce_registration_test_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  $fields = [];
+  // Add a base registration field to commerce product variation entities.
+  if ($entity_type->id() === 'commerce_product_variation') {
+    // Default to enabled with capacity 5 and max of 2 spaces per registration.
+    $default_settings = [
+      'status' => [
+        'value' => TRUE,
+      ],
+      'capacity' => [
+        0 => [
+          'value' => 2,
+        ],
+      ],
+      'maximum_spaces' => [
+        0 => [
+          'value' => 2,
+        ],
+      ],
+      'from_address' => [
+        0 => [
+          'value' => 'test@example.com',
+        ],
+      ],
+    ];
+    $fields['event_registration'] = BaseFieldDefinition::create('registration')
+      ->setLabel(t('Registration'))
+      ->setDefaultValue([
+        'registration_settings' => serialize($default_settings),
+      ]);
+  }
+  return $fields;
+}

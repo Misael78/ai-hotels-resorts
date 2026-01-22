@@ -1,0 +1,6 @@
+edit registration settings:
+  title: 'Edit registration settings'
+  description: 'Edit all registration settings for new and existing host entities, regardless of host entity registration type.'
+
+permission_callbacks:
+  - \Drupal\registration_inline_entity_form\RegistrationPermissionProvider::buildPermissions

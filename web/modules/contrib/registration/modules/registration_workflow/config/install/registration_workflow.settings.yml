@@ -1,0 +1,2 @@
+require_update_access: true
+prevent_complete_own: false

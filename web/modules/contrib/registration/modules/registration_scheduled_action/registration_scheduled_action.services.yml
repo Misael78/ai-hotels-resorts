@@ -1,0 +1,16 @@
+services:
+
+  registration_scheduled_action.cron.schedule:
+    class: Drupal\registration_scheduled_action\Cron\RegistrationSchedule
+    arguments: [
+      '@database',
+      '@entity_type.manager',
+      '@keyvalue.expirable',
+      '@queue',
+    ]
+
+  registration_scheduled_action.logger:
+    parent: logger.channel_base
+    arguments: [
+      'registration_scheduled_action',
+    ]

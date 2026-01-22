@@ -1,0 +1,31 @@
+entity.carousel.settings:
+  path: 'admin/structure/carousel'
+  defaults:
+    _form: '\Drupal\easy_carousel\Form\CarouselSettingsForm'
+    _title: 'Carousel'
+  requirements:
+    _permission: 'administer carousel'
+
+entity.carousel_item.settings:
+  path: 'admin/structure/carousel-item'
+  defaults:
+    _form: '\Drupal\easy_carousel\Form\CarouselItemSettingsForm'
+    _title: 'Carousel Item'
+  requirements:
+    _permission: 'administer carousel_item'
+
+easy_carousel.export_form:
+  path: '/admin/easy_carousel/export'
+  defaults:
+    _form: '\Drupal\easy_carousel\Form\ExportForm'
+    _title: 'Export Easy Carousel Entities'
+  requirements:
+    _permission: 'administer site configuration'
+
+easy_carousel.import_form:
+  path: '/admin/easy_carousel/import'
+  defaults:
+    _form: '\Drupal\easy_carousel\Form\ImportForm'
+    _title: 'Import Easy Carousel Entities'
+  requirements:
+    _permission: 'administer site configuration'

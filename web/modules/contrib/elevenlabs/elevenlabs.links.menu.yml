@@ -1,0 +1,5 @@
+elevenlabs.settings:
+  title: ElevenLabs Settings
+  description: Setup ElevenLabs
+  parent: ai.admin_providers
+  route_name: elevenlabs.settings

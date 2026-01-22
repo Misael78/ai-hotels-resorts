@@ -1,0 +1,41 @@
+simple:
+  css:
+    theme:
+      css/simple.min.css: { minified: true, weight: 100 }
+  js:
+    js/simple.js: {}
+  dependencies:
+  - core/drupal
+  - core/once
+  - core/drupalSettings
+
+bootstrap:
+  css:
+    theme:
+      #css/bootstrap.min.css: { minified: true }
+      css/bootstrap.custom.min.css: { minified: true }
+  js:
+    #js/bootstrap.bundle.min.js: { minified: true }
+    js/bootstrap.custom.js: {}
+
+brands:
+  css:
+    theme:
+      css/brands.min.css: { minified: true, weight: 100 }
+  js:
+    js/brands.js: {}
+  dependencies:
+  - core/drupal
+  - core/once
+  - core/drupalSettings
+
+gallery:
+  css:
+    theme:
+      css/gallery.min.css: { minified: true, weight: 100 }
+  js:
+    js/gallery.js: {}
+  dependencies:
+  - core/drupal
+  - core/once
+  - core/drupalSettings

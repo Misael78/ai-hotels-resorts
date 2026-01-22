@@ -1,0 +1,25 @@
+{
+    "name": "drupal/search_kint",
+    "description": "Allows searching through the Kint dump.",
+    "type": "drupal-module",
+    "homepage": "https://www.drupal.org/project/search_kint",
+    "authors": [
+        {
+            "name": "Felix Eve",
+            "homepage": "https://www.drupal.org/u/dahousecat"
+        },
+        {
+            "name": "Daniel Johnson",
+            "homepage":"https://www.drupal.org/u/daniel_j"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/search_kint",
+        "source": "https://git.drupalcode.org/project/search_kint"
+    },
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "kint-php/kint": "^5.0 | ^6.0",
+        "drupal/devel": "^5.1"
+    }
+}

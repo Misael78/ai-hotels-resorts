@@ -1,0 +1,28 @@
+entity.registration.change_host:
+  path: '/registration/{registration}/host'
+  defaults:
+    _controller: '\Drupal\registration_change_host\Controller\RegistrationChangeHostController::changeHost'
+    _title_callback: '\Drupal\registration_change_host\Controller\RegistrationChangeHostController::title'
+  requirements:
+    _entity_access: 'registration.change host'
+    registration: '\d+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      registration:
+        type: entity:registration
+registration_change_host.change_host_form:
+  path: '/registration/{registration}/update/{host_id}/{host_type_id}'
+  defaults:
+    _entity_form: registration.change_host
+    _title_callback: '\Drupal\registration_change_host\Form\ChangeHostForm::title'
+    host_type_id: null
+  requirements:
+    _entity_access: 'registration.change host'
+    _custom_access: '\Drupal\registration_change_host\Form\ChangeHostForm::access'
+    registration: '\d+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      registration:
+        type: entity:registration

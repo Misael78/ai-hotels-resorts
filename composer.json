@@ -1,0 +1,158 @@
+{
+    "name": "drupal/recommended-project",
+    "description": "Project template for Drupal projects with a relocated document root",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/drupal",
+    "support": {
+        "docs": "https://www.drupal.org/docs/user_guide/en/index.html",
+        "chat": "https://www.drupal.org/node/314178"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "composer/installers": "^2.3",
+        "doctrine/annotations": "^2.0",
+        "drupal/admin_toolbar": "^3.6",
+        "drupal/ai": "^1.2.4",
+        "drupal/ai_audio_field": "^1.0@RC",
+        "drupal/ai_automators": "2.0.x-dev",
+        "drupal/ai_ckeditor": "2.0.x-dev",
+        "drupal/ai_image_alt_text": "^1.0",
+        "drupal/ai_provider_ollama": "^1.2@RC",
+        "drupal/ai_provider_openai": "^1.2",
+        "drupal/bookable_calendar": "^2.2",
+        "drupal/bootstrap3": "^2.0",
+        "drupal/bootstrap4": "^3.0",
+        "drupal/bootstrap5": "^4.0",
+        "drupal/bpmn_io": "^3.0",
+        "drupal/calendar_view": "^2.1",
+        "drupal/chatgpt_plugin": "^2.1",
+        "drupal/color_field": "^3.0",
+        "drupal/commerce": "^3.2",
+        "drupal/commerce_registration": "^3.4",
+        "drupal/commerce_stripe": "^2.1",
+        "drupal/content_access": "^2.1@RC",
+        "drupal/content_planner": "^1.3",
+        "drupal/core-composer-scaffold": "11.2.8",
+        "drupal/core-project-message": "11.2.8",
+        "drupal/core-recommended": "11.2.8",
+        "drupal/dashboard": "^2.1",
+        "drupal/dashboards": "^2.1",
+        "drupal/devel": "^5.4",
+        "drupal/devel_php": "^1.7",
+        "drupal/easy_carousel": "^2.0",
+        "drupal/eca": "^3.0",
+        "drupal/eca_commerce": "^2.1",
+        "drupal/elevenlabs": "^1.1",
+        "drupal/entity_browser": "^2.15",
+        "drupal/feedback_ai": "^1.0",
+        "drupal/field_validation": "^3.0@beta",
+        "drupal/file_entity": "^2.2",
+        "drupal/fullcalendar": "^3.0",
+        "drupal/image_field_to_media": "^3.0",
+        "drupal/imagestyles": "^1.4",
+        "drupal/inline_entity_form": "^3.0@RC",
+        "drupal/jquery_ui": "^1.8",
+        "drupal/juicebox": "^4.0@alpha",
+        "drupal/kint-kint": "^2.2",
+        "drupal/libraries": "^4.1",
+        "drupal/metatag_ai": "^1.0",
+        "drupal/modeler_api": "^1.0",
+        "drupal/openai": "^1.0@beta",
+        "drupal/paragraphs": "^1.19",
+        "drupal/registration": "^3.4",
+        "drupal/rules": "^4.0",
+        "drupal/scheduler": "^2.2",
+        "drupal/search_kint": "^2.0@beta",
+        "drupal/token": "^1.16",
+        "drupal/twig_tweak": "^3.4",
+        "drupal/views_bulk_operations": "^4.4",
+        "drupal/webform": "^6.3@beta",
+        "drupal/webform_booking_calendar": "^1.0.3",
+        "drupal/workflow": "^2.1",
+        "drush/drush": "^13.6",
+        "wikimedia/composer-merge-plugin": "^2.1"
+    },
+    "conflict": {
+        "drupal/drupal": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": true,
+            "drupal/core-project-message": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "wikimedia/composer-merge-plugin": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "web/"
+            }
+        },
+        "installer-paths": {
+            "web/core": [
+                "type:drupal-core"
+            ],
+            "web/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "web/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "web/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "web/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/Commands/contrib/{$name}": [
+                "type:drupal-drush"
+            ],
+            "web/modules/custom/{$name}": [
+                "type:drupal-custom-module"
+            ],
+            "web/profiles/custom/{$name}": [
+                "type:drupal-custom-profile"
+            ],
+            "web/themes/custom/{$name}": [
+                "type:drupal-custom-theme"
+            ],
+            "recipes/{$name}": [
+                "type:drupal-recipe"
+            ]
+        },
+        "drupal-core-project-message": {
+            "include-keys": [
+                "homepage",
+                "support"
+            ],
+            "post-create-project-cmd-message": [
+                "<bg=blue;fg=white>                                                         </>",
+                "<bg=blue;fg=white>  Congratulations, you’ve installed the Drupal codebase  </>",
+                "<bg=blue;fg=white>  from the drupal/recommended-project template!          </>",
+                "<bg=blue;fg=white>                                                         </>",
+                "",
+                "<bg=yellow;fg=black>Next steps</>:",
+                "  * Install the site: https://www.drupal.org/docs/installing-drupal",
+                "  * Read the user guide: https://www.drupal.org/docs/user_guide/en/index.html",
+                "  * Get support: https://www.drupal.org/support",
+                "  * Get involved with the Drupal community:",
+                "      https://www.drupal.org/getting-involved",
+                "  * Remove the plugin that prints this message:",
+                "      composer remove drupal/core-project-message"
+            ]
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Template for a calculated commerce price with waiting list support.
+ *
+ * Available variables:
+ * - base_price: The regular price.
+ * - calculated_price: The calculated price.
+ * - purchasable_entity: The purchasable entity.
+ * - waitlist_message: The message if the item will be added to a waiting list.
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('commerce_registration_waitlist/commerce_price_calculated_waitlist') }}
+
+<div class="waitlist-message">
+  {{- waitlist_message -}}
+</div>
+<div class="waitlist-regular-price">
+  {{- base_price -}}
+</div>
+<div class="waitlist-calculated-price">
+  {{- calculated_price -}}
+</div>

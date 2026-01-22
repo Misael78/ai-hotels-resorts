@@ -1,0 +1,13 @@
+name: 'Juicebox Test Views'
+type: module
+description: 'Provides juicebox views for tests.'
+package: Testing
+core_version_requirement: '^10.3 || ^11'
+dependencies:
+  - drupal:views
+  - juicebox:juicebox
+
+# Information added by Drupal.org packaging script on 2024-12-19
+version: '4.0.0-alpha2'
+project: 'juicebox'
+datestamp: 1734574881

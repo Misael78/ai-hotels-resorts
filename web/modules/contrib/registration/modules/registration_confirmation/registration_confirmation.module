@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * Provides a confirmation message for registrations.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function registration_confirmation_form_registration_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $registration_type = $form_state->getFormObject()->getEntity();
+
+  $form['registration_confirmation'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Confirmation email settings'),
+  ];
+  $form['registration_confirmation']['enable'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Enable confirmation email'),
+    '#default_value' => $registration_type->getThirdPartySetting('registration_confirmation', 'enable'),
+  ];
+  $form['registration_confirmation']['subject'] = [
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $registration_type->getThirdPartySetting('registration_confirmation', 'subject'),
+    '#states' => [
+      'required' => [
+        ':input[name="registration_confirmation[enable]"]' => ['checked' => TRUE],
+      ],
+      'visible' => [
+        ':input[name="registration_confirmation[enable]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+  $message = $registration_type->getThirdPartySetting('registration_confirmation', 'message');
+  $form['registration_confirmation']['message'] = [
+    '#type' => 'text_format',
+    '#title' => t('Message'),
+    '#description' => t('Enter the message you want to send. Tokens are supported, e.g., [node:title].'),
+    '#default_value' => $message['value'] ?? '',
+    '#format' => $message['format'] ?? filter_default_format(),
+    '#states' => [
+      'visible' => [
+        ':input[name="registration_confirmation[enable]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    $form['token_tree'] = [
+      '#theme' => 'token_tree_link',
+      '#token_types' => [
+        'registration',
+        'registration_settings',
+      ],
+      '#global_types' => FALSE,
+      '#weight' => 10,
+    ];
+    /** @var \Drupal\registration\RegistrationManagerInterface $registration_manager */
+    $registration_manager = \Drupal::service('registration.manager');
+    foreach ($registration_manager->getRegistrationEnabledEntityTypes() as $entity_type) {
+      $form['token_tree']['#token_types'][] = $entity_type->id();
+    }
+  }
+  $form['actions']['submit']['#submit'][] = 'registration_confirmation_form_registration_type_submit';
+}
+
+/**
+ * Implements submit handler for hook_form_BASE_FORM_ID_alter().
+ */
+function registration_confirmation_form_registration_type_submit(&$form, FormStateInterface $form_state) {
+  $registration_type = $form_state->getFormObject()->getEntity();
+  $registration_type->setThirdPartySetting('registration_confirmation', 'enable', $form_state->getValue([
+    'registration_confirmation',
+    'enable',
+  ]));
+  $registration_type->setThirdPartySetting('registration_confirmation', 'subject', $form_state->getValue([
+    'registration_confirmation',
+    'subject',
+  ]));
+  $registration_type->setThirdPartySetting('registration_confirmation', 'message', $form_state->getValue([
+    'registration_confirmation',
+    'message',
+  ]));
+  $registration_type->save();
+}

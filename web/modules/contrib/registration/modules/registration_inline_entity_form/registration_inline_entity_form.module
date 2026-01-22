@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Provides inline entity form support for the Entity Registration module.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\registration\Entity\RegistrationSettings;
+use Drupal\registration_inline_entity_form\RegistrationElementSubmit;
+use Drupal\registration_inline_entity_form\RegistrationWidgetSubmit;
+
+/**
+ * Implements hook_entity_access().
+ */
+function registration_inline_entity_form_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  $access_result = AccessResult::neutral();
+
+  if ($entity instanceof RegistrationSettings) {
+    if ($host_entity = $entity->getHostEntity()) {
+      if ($type = $host_entity->getRegistrationTypeBundle()) {
+        $access_result = AccessResult::allowedIfHasPermissions($account, [
+          "edit registration settings",
+          "edit $type registration settings",
+        ], 'OR')
+          ->addCacheableDependency($host_entity)
+          ->addCacheableDependency($entity);
+      }
+    }
+    else {
+      $access_result = AccessResult::allowedIfHasPermission($account, "edit registration settings")
+        ->addCacheableDependency($entity);
+    }
+  }
+
+  return $access_result;
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function registration_inline_entity_form_entity_type_alter(array &$entity_types) {
+  // Set the inline form for registration settings.
+  $entity_types['registration_settings']->setHandlerClass('inline_form', 'Drupal\registration_inline_entity_form\Form\RegistrationSettingsInlineForm');
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function registration_inline_entity_form_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Attach registration related IEF handlers only if the current form has an
+  // IEF widget placed by this module.
+  $widget_state = $form_state->get('inline_entity_form');
+  if (!is_null($widget_state)) {
+    if ($provider = $form_state->get('provider')) {
+      if ($provider == 'registration_inline_entity_form') {
+        RegistrationElementSubmit::attach($form);
+        RegistrationWidgetSubmit::attach($form, $form_state);
+      }
+    }
+  }
+}

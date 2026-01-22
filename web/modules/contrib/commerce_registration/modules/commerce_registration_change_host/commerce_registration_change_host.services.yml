@@ -1,0 +1,6 @@
+services:
+
+  commerce_registration.change_host_subscriber:
+    class: Drupal\commerce_registration_change_host\EventSubscriber\ChangeHostSubscriber
+    tags:
+      - { name: event_subscriber }

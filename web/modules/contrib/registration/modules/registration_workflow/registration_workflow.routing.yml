@@ -1,0 +1,11 @@
+registration_workflow.transition:
+  path: '/registration/{registration}/transition/{transition}'
+  defaults:
+    _form: '\Drupal\registration_workflow\Form\StateTransitionForm'
+  requirements:
+    _state_transition_access_check: 'TRUE'
+  options:
+    _admin_route: TRUE
+    parameters:
+      registration:
+        type: entity:registration

@@ -1,0 +1,11 @@
+name: 'ChatGPT Content Assistance'
+type: module
+description: 'Feature to generate contents from OpenAI.'
+package: Custom
+configure: chatgpt_plugin.admin_settings
+core_version_requirement: ^9 || ^10 || ^11
+
+# Information added by Drupal.org packaging script on 2024-07-24
+version: '2.1.5'
+project: 'chatgpt_plugin'
+datestamp: 1721844317

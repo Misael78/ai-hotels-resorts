@@ -1,0 +1,51 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function hotel_ai_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $node = $form_state->getFormObject()->getEntity();
+
+  if ($node->bundle() !== 'room') {
+    return;
+  }
+
+  // Add AI button
+  $form['actions']['hotel_ai_generate'] = [
+    '#type' => 'submit',
+    '#value' => t('✨ Generate AI Content'),
+    '#submit' => ['hotel_ai_form_node_form_submit'],
+    '#weight' => -10,
+  ];
+}
+
+/**
+ * Submit callback for the AI generation button.
+ */
+function hotel_ai_form_node_form_submit(array &$form, FormStateInterface $form_state) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $form_state->getFormObject()->getEntity();
+
+  // Get Body from form → ALWAYS the name "body"
+  $body_input = $form_state->getValue('body')['value'] ?? '';
+  if ($node->hasField('field_body') && !empty($body_input)) {
+    $node->set('field_body', [
+      'value' => $body_input,
+      'format' => 'basic_html',
+    ]);
+  }
+
+  // Call the generator
+  $generator = \Drupal::service('hotel_ai.generator');
+  $changed = $generator->generateDraftForRoom($node);
+
+  if ($changed) {
+    \Drupal::messenger()->addStatus(t('✨ AI content generated! Review before saving.'));
+    $form_state->setRebuild(TRUE);
+  } else {
+    \Drupal::messenger()->addWarning(t('⚠️ Could not generate AI content. Ensure Body has text.'));
+  }
+}
+

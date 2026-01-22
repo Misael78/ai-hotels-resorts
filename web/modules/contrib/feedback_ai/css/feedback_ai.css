@@ -1,0 +1,87 @@
+/**** forms style*****/
+.feedback-ai-form {
+  margin-bottom: 20px;
+}
+
+/*****chart no data didplay css*******/
+.no-data-message {
+  font-size: 18px;
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/*******submitted on date filter csss*******/
+.view-feedback-ai-submissions .fieldset-wrapper .form-item,
+.view-feedback-ai-submissions .fieldset-wrapper .form-actions {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.view-feedback-ai-submissions #edit-created-wrapper legend {
+  margin-bottom: 0;
+  background: none;
+}
+.view-feedback-ai-submissions #edit-created-wrapper legend .fieldset__label {
+  color: var(--color-text-neutral-medium);
+  padding: 5px;
+  font-weight: 400;
+  font-size: 16px;
+}
+.view-feedback-ai-submissions #edit-created-wrapper .fieldset__wrapper {
+  padding: 0 !important;
+}
+
+.view-feedback-ai-submissions #edit-created-wrapper {
+  border: none;
+}
+
+
+/*** View Pricing & Usage pop up css ****/
+.ui-dialog .ui-dialog-titlebar-close {
+  border: 0;
+  background: unset !important;
+}
+
+.ui-dialog {
+  height: auto !important;
+  width: 800px !important;
+}
+
+.feedback-usage {
+  margin-bottom: 35px;
+}
+
+a:focus {
+  outline: none !important;
+}
+.gpt-40-price-table tr th {
+  text-align: start;
+}
+.gpt-3-turbo-price tr th {
+  text-align: start;
+}
+
+.feedback-usage a {
+  font-weight: bold;
+  color: aqua;
+}
+.ui-dialog {
+  max-width: 100% !important;
+}
+
+.feedback-usage .usage-message {
+  font-weight: bold;
+}
+
+.gpt-40-price-table {
+  width: 100%;
+}
+
+.gpt-3-turbo-price-table {
+  width: 100%;
+}
+
+.view-feedback-ai-submissions .view-content {
+  overflow: auto;
+}

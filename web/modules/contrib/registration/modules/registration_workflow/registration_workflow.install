@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Registration Workflow module.
+ */
+
+use Drupal\Core\Cache\Cache;
+
+/**
+ * Implements hook_install().
+ */
+function registration_workflow_install() {
+  // Clear render cache on installation so entity operations rebuild.
+  $bins = Cache::getBins();
+  $bins['render']->deleteAll();
+}
+
+/**
+ * Adds a setting to require update access to registrations.
+ */
+function registration_workflow_update_10001() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration_workflow.settings')
+    ->set('require_update_access', FALSE)
+    ->save();
+}
+
+/**
+ * Adds a setting to prevent completion of own registrations.
+ */
+function registration_workflow_update_10002() {
+  \Drupal::service('config.factory')
+    ->getEditable('registration_workflow.settings')
+    ->set('prevent_complete_own', FALSE)
+    ->save();
+}

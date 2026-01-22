@@ -1,0 +1,38 @@
+entity.commerce_product.commerce_registration.manage_registrations:
+  path: '/product/{commerce_product}/registrations'
+  defaults:
+    _controller: '\Drupal\commerce_registration\Controller\CommerceRegistrationController::manageRegistrations'
+    _title_callback: '\Drupal\commerce_registration\Controller\CommerceRegistrationController::manageRegistrationsTitle'
+  requirements:
+    _manage_commerce_registrations_access_check: 'TRUE'
+  options:
+    _admin_route: TRUE
+    parameters:
+      commerce_product:
+        type: entity:commerce_product
+
+entity.commerce_product.commerce_registration.registration_settings:
+  path: '/product/{commerce_product}/registrations/settings'
+  defaults:
+    _controller: '\Drupal\commerce_registration\Controller\CommerceRegistrationController::registrationSettings'
+    _title_callback: '\Drupal\commerce_registration\Controller\CommerceRegistrationController::registrationSettingsTitle'
+  requirements:
+    _manage_commerce_registrations_access_check: 'TRUE'
+  options:
+    _admin_route: TRUE
+    parameters:
+      commerce_product:
+        type: entity:commerce_product
+
+entity.commerce_product.commerce_registration.broadcast:
+  path: '/product/{commerce_product}/registrations/broadcast'
+  defaults:
+    _form: '\Drupal\commerce_registration\Form\EmailProductRegistrantsForm'
+    _title_callback: '\Drupal\commerce_registration\Controller\CommerceRegistrationController::broadcastTitle'
+  requirements:
+    _manage_commerce_registrations_access_check: 'TRUE'
+  options:
+    _admin_route: TRUE
+    parameters:
+      commerce_product:
+        type: entity:commerce_product

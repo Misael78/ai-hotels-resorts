@@ -1,0 +1,15 @@
+.idea/
+mariadb-init
+postgres-init
+mutagen.yml.lock
+.vscode.env
+.env
+/vendor/
+/mariadb/
+*.sql
+.vscode/
+tmp/
+logs/
+.DS_Store
+*.bak
+*.log

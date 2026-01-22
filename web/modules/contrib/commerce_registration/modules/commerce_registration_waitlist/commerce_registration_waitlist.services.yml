@@ -1,0 +1,43 @@
+services:
+
+  commerce_registration_waitlist.waitlist_event_subscriber:
+    class: Drupal\commerce_registration_waitlist\EventSubscriber\WaitListEventSubscriber
+    arguments: [
+      '@plugin.manager.action',
+      '@entity_type.manager',
+      '@registration_waitlist.logger',
+      '@module_handler',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  commerce_registration_waitlist.waitlist_order_processor:
+    class: Drupal\commerce_registration_waitlist\OrderProcessor\WaitListOrderProcessor
+    arguments: [
+      '@commerce_price.chain_price_resolver',
+      '@current_user',
+      '@event_dispatcher',
+      '@entity_type.manager',
+    ]
+    tags:
+      - { name: commerce_order.order_processor, priority: 150 }
+
+  commerce_registration_waitlist.waitlist_price_resolver:
+    class: Drupal\commerce_registration_waitlist\Resolver\WaitListPriceResolver
+    arguments: [
+      '@commerce_store.current_store',
+      '@entity_type.manager',
+    ]
+    tags:
+      - { name: commerce_price.price_resolver, priority: 50 }
+
+  commerce_registration_waitlist.twig_extension:
+    class: Drupal\commerce_registration_waitlist\TwigExtension\WaitListTwigExtension
+    tags:
+      - { name: twig.extension }
+
+  commerce_registration_waitlist.logger:
+    parent: logger.channel_base
+    arguments: [
+      'commerce_registration_waitlist',
+    ]

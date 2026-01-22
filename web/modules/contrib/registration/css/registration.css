@@ -1,0 +1,16 @@
+/**
+ * @file
+ * Styles for the registration view.
+ *
+ * Style entity reference fields like regular fields.
+ */
+
+.registration .field--type-entity-reference {
+  margin: inherit;
+  font-family: inherit;
+}
+
+.registration .field--type-entity-reference .field__label {
+  font-size: inherit;
+  font-weight: bold;
+}

@@ -1,0 +1,275 @@
+<?php
+
+/**
+ * @file
+ * Contains hook implementations for the Feedback AI module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\feedback_ai\Plugin\views\filter\FeedbackAiDateTimestamp;
+
+/**
+ * Implements hook_theme().
+ *
+ * Defines theme implementations for the Feedback AI module.
+ */
+function feedback_ai_theme() {
+  return [
+    'feedback_ai_block' => [
+      'render element' => 'elements',
+    ],
+
+    'sentiment_chart' => [
+      'render element' => 'elements',
+      'template' => 'sentiment-chart',
+    ],
+
+    'feedback_ai_price_modal' => [
+      'render element' => 'elements',
+      'template' => 'feedback-ai-price-modal',
+    ],
+
+  ];
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Adds necessary CSS library to the form.
+ */
+function feedback_ai_form_alter(&$form, &$form_state, $form_id) {
+  $form['#attached']['library'][] = 'feedback_ai/feedback_ai_css';
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function feedback_ai_views_data() {
+  $data = [];
+
+  // Define the base table information.
+  $data['feedback_ai']['table']['group'] = t('Feedback AI');
+  $data['feedback_ai']['table']['base'] = [
+    'field' => 'id',
+    'title' => t('Feedback AI'),
+    'help' => t('Stores feedback with sentiment analysis results.'),
+    'weight' => -10,
+  ];
+
+  // Define the fields in the table.
+  $data['feedback_ai']['id'] = [
+    'title' => t('ID'),
+    'help' => t('The unique identifier of the feedback entry.'),
+    'field' => [
+      'id' => 'numeric',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'numeric',
+    ],
+  ];
+
+  $data['feedback_ai']['uid'] = [
+    'title' => t('User ID'),
+    'help' => t('The user ID of the user who provided the feedback.'),
+    'relationship' => [
+      'title' => t('User'),
+      'help' => t('Relate feedback to the user who provided it.'),
+      'base' => 'users_field_data',
+      'base field' => 'uid',
+      'id' => 'standard',
+      'label' => t('User'),
+    ],
+    'field' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'numeric',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+  ];
+
+  $data['feedback_ai']['name'] = [
+    'title' => t('Name'),
+    'help' => t('The name of the user who provided the feedback.'),
+    'field' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'string',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+  ];
+
+  $data['feedback_ai']['email'] = [
+    'title' => t('Email'),
+    'help' => t('The email of the user who provided the feedback.'),
+    'field' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'string',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+  ];
+
+  $data['feedback_ai']['sentiment_text'] = [
+    'title' => t('Feedback'),
+    'help' => t('The feedback provided by the user.'),
+    'field' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'string',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+  ];
+
+  $data['feedback_ai']['sentiment_result'] = [
+    'title' => t('Sentiment Rating'),
+    'help' => t('The sentiment analysis result of the feedback.'),
+    'field' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'string',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+  ];
+
+  $data['feedback_ai']['created'] = [
+    'title' => t('Submitted on'),
+    'help' => t('The timestamp when the feedback was submitted.'),
+    'field' => [
+      'id' => 'date',
+      'default_formatter' => 'date_default',
+      'default_formatter_settings' => [
+        'date_format' => 'long',
+  // Default granularity.
+        'granularity' => 'second',
+      ],
+    ],
+    'filter' => [
+      'id' => 'date',
+      'id' => 'date',
+      'expose' => [
+        'operator_id' => 'date_operator',
+        'label' => t('Submitted on'),
+        'description' => t('Filter by submission date.'),
+        'identifier' => 'created',
+      ],
+    ],
+    'sort' => [
+      'id' => 'date',
+    ],
+  ];
+
+  return $data;
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ *
+ * Customizes the exposed form for the feedback AI submissions view.
+ */
+function feedback_ai_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $view = $form_state->get('view');
+  if ($form_id == 'views_exposed_form' && $view->id() == 'feedback_ai_submissions') {
+    $form['sentiment_result'] = [
+      '#type' => 'select',
+      '#title' => t('Sentiment Rating'),
+      '#attributes' => ['id' => 'sentiment-result'],
+      '#options' => [
+        '' => t('ALL'),
+        'positive' => t('Positive'),
+        'negative' => t('Negative'),
+        'neutral' => t('Neutral'),
+      ],
+    ];
+  }
+
+}
+
+/**
+ * Implements hook_views_plugins_filter_alter().
+ */
+function feedback_ai_views_plugins_filter_alter(array &$plugins): void {
+  // Use the module filter class for both date and datetime filters.
+  if (\array_key_exists('date', $plugins)) {
+    $plugins['date']['class'] = FeedbackAiDateTimestamp::class;
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function feedback_ai_preprocess_views_view(&$variables) {
+  $view = $variables['view'];
+
+  // Check if this is the specific view and display you want to target.
+  if ($view->id() == 'feedback_ai_submissions' && $view->current_display == 'page_1') {
+    // Render the custom block.
+    $block_manager = \Drupal::service('plugin.manager.block');
+    $block_plugin = $block_manager->createInstance('feedback_ai_chart_block', []);
+    $block_render = $block_plugin->build();
+
+    // Add the block render array to the view's render array.
+    $variables['header']['feedback_ai_chart_block'] = [
+      '#markup' => '',
+      '#weight' => -1,
+      'content' => $block_render,
+    ];
+  }
+  elseif ($view->id() == 'feedback_ai_submissions' && $view->current_display == 'block_1') {
+    $block_manager = \Drupal::service('plugin.manager.block');
+    $block_plugin = $block_manager->createInstance('feedback_ai_chart_block', []);
+    $block_render = $block_plugin->build();
+
+    // Add the block render array to the view's render array.
+    $variables['header']['feedback_ai_chart_block'] = [
+      '#markup' => '',
+      '#weight' => -1,
+      'content' => $block_render,
+    ];
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function feedback_ai_help($route_name) {
+  switch ($route_name) {
+    // Display help text on the module's main help page.
+    case 'help.page.feedback_ai':
+    $text = file_get_contents(__DIR__ . "/README.md");
+    // If the Markdown module is installed...
+    if (\Drupal::moduleHandler()->moduleExists('markdown') === TRUE) {
+      // Uses the Markdown filter to render the README.
+      $filter_manager = \Drupal::service('plugin.manager.filter');
+      $settings = \Drupal::configFactory()->get('markdown.settings')->getRawData();
+      $config = ['settings' => $settings];
+      $filter = $filter_manager->createInstance('markdown', $config);
+      $output = $filter->process($text, 'en');
+    }
+    // Else the Markdown module is not installed...
+    else {
+      // Outputs the README in plain text.
+      $output = '<pre>' . $text . '</pre>';
+    }
+
+     return $output;
+
+  }
+}

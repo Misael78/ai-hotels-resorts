@@ -1,0 +1,26 @@
+{
+    "name": "drupal/registration",
+    "description": "Registration is a flexible module that provides user registration for events.",
+    "type": "drupal-module",
+    "homepage": "https://drupal.org/project/registration",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "John Oltman",
+            "homepage": "https://www.drupal.org/u/john.oltman",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "drupal/core": "^10.3 || ^11"
+    },
+    "require-dev": {
+        "drupal/inline_entity_form": "^3.0",
+        "drupal/token": "^1.15"
+    },
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/registration",
+        "source": "https://git.drupalcode.org/project/registration"
+    },
+    "minimum-stability": "dev"
+}

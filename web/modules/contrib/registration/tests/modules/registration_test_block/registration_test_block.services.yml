@@ -1,0 +1,6 @@
+services:
+  registration_test_block.user_route_context:
+    class: Drupal\registration_test_block\ContextProvider\UserRouteContext
+    arguments: ['@current_route_match']
+    tags:
+      - { name: 'context_provider' }

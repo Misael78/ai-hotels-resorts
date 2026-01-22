@@ -1,0 +1,9 @@
+services:
+  registration_change_host_single_operation.route_subscriber:
+    class: Drupal\registration_change_host_single_operation\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  registration_change_host_single_operation.event_subscriber:
+    class: \Drupal\registration_change_host_single_operation\EventSubscriber\RegistrationChangeHostSingleOperationSubscriber
+    tags:
+      - { name: event_subscriber }

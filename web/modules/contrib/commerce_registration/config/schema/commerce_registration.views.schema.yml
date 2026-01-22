@@ -1,0 +1,27 @@
+# Schema for the views plugins of the Commerce Registration module.
+
+views.area.manage_commerce_registrations_caption:
+  type: views_area
+  label: 'Manage commerce registrations caption'
+views.area.manage_commerce_registrations_empty:
+  type: views_area
+  label: 'Manage commerce registrations empty message'
+
+views.argument.commerce_registration_product_id:
+  type: views_argument
+  label: 'Commerce registrations product ID'
+
+views.field.product_registration_settings_operations:
+  type: views_field
+  label: 'Product registration settings operations'
+
+views.filter.commerce_registration_product_id:
+  type: views.filter.equality
+  label: 'Product filter'
+views.filter.commerce_registration_product_variation:
+  type: views.filter.in_operator
+  label: 'Product variation filter'
+  mapping:
+    default_to_first_variation:
+      type: boolean
+      label: 'Default to first product variation'

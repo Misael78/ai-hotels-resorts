@@ -1,0 +1,5 @@
+services:
+  registration_waitlist_test_event.event_subscriber:
+    class: \Drupal\registration_waitlist_test_event\EventSubscriber\RegistrationEventSubscriber
+    tags:
+      - { name: event_subscriber }

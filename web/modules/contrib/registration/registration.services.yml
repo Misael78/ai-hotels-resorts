@@ -1,0 +1,158 @@
+services:
+
+  cache_context.host_entity:
+    class: Drupal\registration\Cache\Context\HostEntityCacheContext
+    arguments: [
+      '@context.repository',
+      '@entity_type.manager',
+      '@registration.manager',
+    ]
+    tags:
+      - { name: cache.context}
+
+  registration.cron.expire_held_registrations:
+    class: Drupal\registration\Cron\ExpireHeldRegistrations
+    arguments: [
+      '@entity_type.manager',
+      '@queue',
+    ]
+
+  registration.cron.send_reminders:
+    class: Drupal\registration\Cron\SendReminders
+    arguments: [
+      '@database',
+      '@queue',
+    ]
+
+  registration.cron.set_and_forget:
+    class: Drupal\registration\Cron\SetAndForget
+    arguments: [
+      '@database',
+      '@queue',
+    ]
+
+  registration.field_manager:
+    class: Drupal\registration\RegistrationFieldManager
+    arguments: [
+      '@entity_type.manager',
+      '@entity_type.bundle.info',
+      '@entity_display.repository',
+      '@typed_data_manager',
+      '@language_manager',
+      '@keyvalue',
+      '@module_handler',
+      '@cache.discovery',
+      '@entity.last_installed_schema.repository',
+    ]
+
+  registration.logger:
+    parent: logger.channel_base
+    arguments: [
+      'registration',
+    ]
+
+  registration.collection_access_checker:
+    class: Drupal\registration\Access\RegistrationCollectionAccessCheck
+    tags:
+      - { name: access_check, applies_to: _registration_collection_access }
+
+  registration.manage_registrations_access_checker:
+    class: Drupal\registration\Access\ManageRegistrationsAccessCheck
+    arguments: [
+      '@registration.manager',
+    ]
+    tags:
+      - { name: access_check, applies_to: _manage_registrations_access_check }
+
+  registration.register_access_checker:
+    class: Drupal\registration\Access\RegisterAccessCheck
+    arguments: [
+      '@config.factory',
+      '@entity_type.manager',
+      '@registration.manager',
+    ]
+    tags:
+      - { name: access_check, applies_to: _register_access_check }
+
+  registration.route_subscriber:
+    class: Drupal\registration\Routing\RouteSubscriber
+    arguments: [
+      '@registration.manager',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  registration.notifier:
+    class: Drupal\registration\Notify\RegistrationMailer
+    arguments: [
+      '@config.factory',
+      '@current_user',
+      '@event_dispatcher',
+      '@registration.logger',
+      '@plugin.manager.mail',
+      '@queue',
+      '@registration.manager',
+      '@renderer',
+    ]
+
+  registration.manager:
+    class: Drupal\registration\RegistrationManager
+    arguments: [
+      '@current_user',
+      '@entity_display.repository',
+      '@entity_field.manager',
+      '@entity_type.bundle.info',
+      '@entity_type.manager',
+      '@router.route_provider',
+    ]
+
+  registration.user_registrations_access_checker:
+    class: Drupal\registration\Access\UserRegistrationsAccessCheck
+    arguments: [
+      '@registration.manager',
+    ]
+    tags:
+      - { name: access_check, applies_to: _user_registrations_access_check }
+
+  registration.exception_subscriber:
+    class: Drupal\registration\EventSubscriber\ExceptionSubscriber
+    arguments: [
+      '@registration.manager',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  registration.timestamp_event_subscriber:
+    class: Drupal\registration\EventSubscriber\TimestampEventSubscriber
+    arguments: ['@datetime.time']
+    tags:
+      - { name: event_subscriber }
+
+  registration.validation.constraint:
+    class: Drupal\registration\Validation\RegistrationConstraintManager
+    parent: default_plugin_manager
+    tags:
+      - { name: plugin_manager_cache_clear }
+
+  cache.registration_validator:
+    class: Drupal\Core\Cache\MemoryBackend
+    tags:
+      - { name: cache.bin }
+    factory: ['@cache_factory', 'get']
+    arguments: [registration_validator]
+
+  variation_cache.registration_validator:
+    class: Drupal\Core\Cache\VariationCacheInterface
+    factory: ['@variation_cache_factory', 'get']
+    arguments: [registration_validator]
+
+  registration.validator:
+    class: Drupal\registration\RegistrationValidator
+    arguments: [
+      '@variation_cache.registration_validator',
+      '@class_resolver',
+      '@entity_type.manager',
+      '@event_dispatcher',
+      '@registration.validation.constraint',
+      '@typed_data_manager',
+    ]

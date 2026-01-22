@@ -1,0 +1,4 @@
+administer registration scheduled action:
+  title: 'Administer scheduled actions'
+  description: 'Maintain the schedule of automated registration actions.'
+  restrict access: true

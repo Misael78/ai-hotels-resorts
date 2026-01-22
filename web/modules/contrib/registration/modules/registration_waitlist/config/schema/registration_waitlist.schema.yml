@@ -1,0 +1,26 @@
+# Schema for the configuration files of the Registration Waitlist module.
+
+registration.type.*.third_party.registration_waitlist:
+  type: mapping
+  label: 'Wait list confirmation email settings'
+  mapping:
+    confirmation_email:
+      label: 'Enable confirmation email'
+      type: boolean
+    confirmation_email_subject:
+      label: 'Confirmation email subject'
+      type: string
+    confirmation_email_message:
+      label: 'Confirmation email message'
+      type: mapping
+      mapping:
+        value:
+          type: string
+        format:
+          type: string
+    autofill_sort_field:
+      label: 'Autofill sort field'
+      type: string
+    autofill_sort_order:
+      label: 'Autofill sort order'
+      type: string

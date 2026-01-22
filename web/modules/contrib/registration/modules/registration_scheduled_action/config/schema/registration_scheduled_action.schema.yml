@@ -1,0 +1,36 @@
+# Schema for the configuration files of the Registration Scheduled Action module.
+
+registration_scheduled_action.registration_scheduled_action.*:
+  type: config_entity
+  label: 'Scheduled action settings'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    weight:
+      type: integer
+      label: 'Weight'
+    datetime:
+      type: mapping
+      mapping:
+        length:
+          type: integer
+          label: 'Length of time'
+        type:
+          type: string
+          label: 'Period'
+        position:
+          type: string
+          label: 'Position'
+    plugin:
+      type: string
+      label: 'Plugin'
+    target_langcode:
+      type: string
+      label: 'Language'
+    configuration:
+      type: ignore
+      label: 'Configuration'

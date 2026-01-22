@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * @file
+ * Provides integration with the Registration Wait List module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_registration_waitlist_theme() {
+  return [
+    'commerce_price_calculated_waitlist' => [
+      'variables' => [
+        'base_price' => NULL,
+        'calculated_price' => NULL,
+        'purchasable_entity' => NULL,
+        'waitlist_message' => NULL,
+      ],
+    ],
+    'order_item_title_waitlist' => [
+      'variables' => [
+        'title' => NULL,
+        'order_item' => NULL,
+      ],
+    ],
+    'order_item_waitlist_indicator' => [
+      'variables' => [],
+    ],
+    'product_variation_title_waitlist' => [
+      'variables' => [
+        'title' => NULL,
+        'variation' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function commerce_registration_waitlist_form_registration_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $registration_type = $form_state->getFormObject()->getEntity();
+
+  $form['commerce_registration_waitlist'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Space available confirmation email settings'),
+    '#description' => t('Sent when space becomes available and a registration is moved off the wait list.'),
+    '#weight' => 10,
+  ];
+  $form['commerce_registration_waitlist']['confirmation_email'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Enable confirmation email'),
+    '#default_value' => $registration_type->getThirdPartySetting('commerce_registration_waitlist', 'confirmation_email'),
+  ];
+  $form['commerce_registration_waitlist']['confirmation_email_subject'] = [
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $registration_type->getThirdPartySetting('commerce_registration_waitlist', 'confirmation_email_subject'),
+    '#states' => [
+      'required' => [
+        ':input[name="commerce_registration_waitlist[confirmation_email]"]' => ['checked' => TRUE],
+      ],
+      'visible' => [
+        ':input[name="commerce_registration_waitlist[confirmation_email]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+  $message = $registration_type->getThirdPartySetting('commerce_registration_waitlist', 'confirmation_email_message');
+  $form['commerce_registration_waitlist']['confirmation_email_message'] = [
+    '#type' => 'text_format',
+    '#title' => t('Message'),
+    '#description' => t('Enter the message you want to send. Tokens are supported, e.g., [node:title].'),
+    '#default_value' => $message['value'] ?? '',
+    '#format' => $message['format'] ?? filter_default_format(),
+    '#states' => [
+      'visible' => [
+        ':input[name="commerce_registration_waitlist[confirmation_email]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    $form['token_tree'] = [
+      '#theme' => 'token_tree_link',
+      '#token_types' => [
+        'registration',
+        'registration_settings',
+      ],
+      '#global_types' => FALSE,
+      '#weight' => 10,
+    ];
+    /** @var \Drupal\registration\RegistrationManagerInterface $registration_manager */
+    $registration_manager = \Drupal::service('registration.manager');
+    foreach ($registration_manager->getRegistrationEnabledEntityTypes() as $entity_type) {
+      $form['token_tree']['#token_types'][] = $entity_type->id();
+    }
+  }
+  $form['actions']['submit']['#submit'][] = 'commerce_registration_waitlist_form_registration_type_submit';
+}
+
+/**
+ * Implements submit handler for hook_form_BASE_FORM_ID_alter().
+ */
+function commerce_registration_waitlist_form_registration_type_submit(&$form, FormStateInterface $form_state) {
+  $registration_type = $form_state->getFormObject()->getEntity();
+  $registration_type->setThirdPartySetting('commerce_registration_waitlist', 'confirmation_email', $form_state->getValue([
+    'commerce_registration_waitlist',
+    'confirmation_email',
+  ]));
+  $registration_type->setThirdPartySetting('commerce_registration_waitlist', 'confirmation_email_subject', $form_state->getValue([
+    'commerce_registration_waitlist',
+    'confirmation_email_subject',
+  ]));
+  $registration_type->setThirdPartySetting('commerce_registration_waitlist', 'confirmation_email_message', $form_state->getValue([
+    'commerce_registration_waitlist',
+    'confirmation_email_message',
+  ]));
+  $registration_type->save();
+}

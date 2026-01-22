@@ -1,0 +1,5 @@
+possible_hosts_list:
+  version: VERSION
+  css:
+    theme:
+      css/registration_change_host.possible_hosts_list.css: {}

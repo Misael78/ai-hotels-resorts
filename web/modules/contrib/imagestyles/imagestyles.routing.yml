@@ -1,0 +1,10 @@
+imagestyles.imagestyles_settings:
+  path: 'admin/config/media/image-styles/imagestyles'
+  defaults:
+    _form: '\Drupal\imagestyles\Form\SettingsForm'
+    _title: 'Image Styles Display'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+

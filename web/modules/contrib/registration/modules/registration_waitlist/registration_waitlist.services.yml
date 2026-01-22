@@ -1,0 +1,49 @@
+services:
+
+  registration_waitlist.registration_event_subscriber:
+    class: \Drupal\registration_waitlist\EventSubscriber\RegistrationEventSubscriber
+    arguments: [
+      '@plugin.manager.action',
+      '@event_dispatcher',
+      '@registration_waitlist.manager',
+      '@registration_waitlist.logger',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  registration_waitlist.registration_form_event_subscriber:
+    class: Drupal\registration_waitlist\EventSubscriber\RegistrationFormEventSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  registration_waitlist.registration_settings_event_subscriber:
+    class: Drupal\registration_waitlist\EventSubscriber\RegistrationSettingsEventSubscriber
+    arguments: [
+      '@registration_waitlist.manager',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  registration_waitlist.registration_validation_event_subscriber:
+    class: Drupal\registration_waitlist\EventSubscriber\RegistrationValidationEventSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  registration_waitlist.manager:
+    class: Drupal\registration_waitlist\RegistrationWaitListManager
+    arguments: [
+      '@event_dispatcher',
+      '@registration_waitlist.logger',
+      '@entity_field.manager',
+    ]
+
+  registration_waitlist.logger:
+    parent: logger.channel_base
+    arguments: [
+      'registration_waitlist',
+    ]
+
+  registration_waitlist.twig_extension:
+    class: Drupal\registration_waitlist\TwigExtension\RegistrationWaitListTwigExtension
+    tags:
+      - { name: twig.extension }

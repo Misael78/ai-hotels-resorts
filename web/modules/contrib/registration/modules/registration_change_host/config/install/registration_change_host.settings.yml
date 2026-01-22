@@ -1,0 +1,5 @@
+task_title: 'Change @host_type_label'
+form_title: 'Change @host_type_label for Registration #%id'
+page_title: 'Select @host_type_label'
+confirm_form_title: 'Confirm change of @host_type_label for Registration #%id'
+workflow: multistep

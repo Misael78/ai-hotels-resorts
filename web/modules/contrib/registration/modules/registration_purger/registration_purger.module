@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Provides purging of registration data for registrations.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_delete().
+ */
+function registration_purger_entity_delete(EntityInterface $entity) {
+  \Drupal::service('registration_purger.purger')->onEntityDelete($entity);
+}

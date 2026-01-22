@@ -1,0 +1,103 @@
+{#
+/**
+ * @file
+ * This template is used to render a default carousel entity,
+ *
+ * Available variables:
+ * - carousel: carousel entity.
+ * - slides: A list of carousel items.
+ * - configuration: The configuration block
+ * - data: An array of carousel values.
+ *
+ * @see Drupal\easy_carousel\Plugin\Block\BootstrapCarouselBlock class.
+ */
+#}
+
+{% if data.status %}
+
+	<div
+		id="{{ data.id }}"
+		class="carousel slide easy-carousel--bootstrap"
+		data-id="{{ data.cid }}"
+		data-last_updated="{{ data.config.last_updated }}"
+		data-bs-ride="{{ data.config.auto_start ? 'carousel' : 'false' }}"
+		data-bs-interval="{{ data.config.auto_start ? data.config.speed : 'false' }}">
+
+		{% if data.config.show_indicators %}
+			<div class="carousel-indicators">
+				{% for slide in data.items %}
+					{% if slide.status %}
+						<button type="button" data-bs-target="#{{ data.id }}" data-bs-slide-to="{{ loop.index0 }}" {{ loop.first ? 'class="active"' : '' }} {{ loop.first ? 'aria-current="true"' : '' }} aria-label="{{ slide.label }}"></button>
+					{% endif %}
+				{% endfor %}
+			</div>
+		{% endif %}
+
+		<div class="carousel-inner">
+
+			{% for slide in data.items %}
+				{% if slide.status %}
+
+					<div class="carousel-item {{ loop.first ? 'active' : '' }}" style="background-color: {{ slide.background_color }}">
+						{% if slide.media %}
+							{% if slide.media.bundle == 'image' %}
+								<img class="d-block w-100" src="{{ file_url(slide.media.uri) }}" alt="{{ slide.media.alt }}" />
+							{% elseif slide.media.bundle == 'video' %}
+								<video controls class="easy-carousel-video">
+									<source src="{{ file_url(slide.media.uri) }}" type="{{ slide.media.mime_type }}">
+								</video>
+							{% elseif slide.media.bundle == 'remote_video' %}
+								<iframe
+									src="{{ embed_url(slide.media.uri, slide.video_options) }}"
+									class="easy-carousel-video easy-carousel-remote-video"
+									sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"></iframe>
+							{% endif %}
+						{% endif %}
+
+						{% if slide.base64_image %}
+							<img class="d-block w-100" src="{{ slide.base64_image }}" />
+						{% endif %}
+
+						{% if slide.external_image %}
+							<img class="d-block w-100" src="{{ slide.external_image.uri }}" title="{{ slide.external_image.title }}" />
+						{% endif %}
+
+						<div class="carousel-caption d-none d-md-block text-align-{{ slide.text_alignment }} text-position-{{ slide.text_position }}" style="background-color: {{ slide.background_color }}; scrollbar-width: thin; scrollbar-color: #000 {{ slide.background_color }};">
+							{% if slide.show_title %}
+								<h5 style="color: {{ slide.title_color }}">{{ slide.label }}</h5>
+							{% endif %}
+							<div style="color: {{ slide.description_color }};">{{ slide.description|raw }}</div>
+							{# Print the link if exists #}
+							{% if slide.link %}
+								<p>
+									<a
+										class="slide-link"
+										href="{{ slide.link.uri }}"
+										target="{{ slide.link.target }}"
+										style="background-color: {{ slide.title_color }}; color: {{ slide.background_color }}"
+										title="{{ slide.link.title }}">
+										{{ slide.link.title }}
+									</a>
+								</p>
+							{% endif %}
+						</div>
+					</div>
+
+				{% endif %}
+			{% endfor %}
+
+			{% if data.config.show_controls %}
+				<button class="carousel-control-prev" type="button" data-bs-target="#{{ data.id }}" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">{{ 'Previous'|t }}</span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#{{ data.id }}" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">{{ 'Next'|t }}</span>
+				</button>
+			{% endif %}
+
+		</div>
+	</div>
+{% endif %}
+

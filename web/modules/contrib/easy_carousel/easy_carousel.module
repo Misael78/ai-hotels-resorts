@@ -1,0 +1,152 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Easy Carousel module.
+ */
+
+use Drupal\easy_carousel\Entity\Carousel;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function easy_carousel_theme(): array {
+  return [
+    'carousel_simple' => [
+      'variables' => [
+        'carousel' => NULL,
+        'slides' => NULL,
+        'configuration' => NULL,
+        'data' => NULL,
+      ],
+    ],
+    'carousel_bootstrap' => [
+      'variables' => [
+        'carousel' => NULL,
+        'slides' => NULL,
+        'configuration' => NULL,
+        'data' => NULL,
+      ],
+    ],
+    'carousel_brands' => [
+      'variables' => [
+        'carousel' => NULL,
+        'slides' => NULL,
+        'configuration' => NULL,
+        'data' => NULL,
+      ],
+    ],
+    'carousel_gallery' => [
+      'variables' => [
+        'carousel' => NULL,
+        'slides' => NULL,
+        'configuration' => NULL,
+        'data' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_user_cancel().
+ */
+function easy_carousel_user_cancel($edit, UserInterface $account, $method): void {
+  switch ($method) {
+    case 'user_cancel_block_unpublish':
+      // Unpublish carousel entities.
+      $storage = \Drupal::entityTypeManager()->getStorage('carousel');
+      $carousel_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->condition('status', 1)
+        ->accessCheck(FALSE)
+        ->execute();
+      /** @var Carousel */
+      foreach ($storage->loadMultiple($carousel_ids) as $carousel) {
+        $carousel->set('status', FALSE)->save();
+      }
+      // Unpublish carousel item entities.
+      $storage = \Drupal::entityTypeManager()->getStorage('carousel_item');
+      $carousel_item_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->condition('status', 1)
+        ->accessCheck(FALSE)
+        ->execute();
+      /** @var Carousel */
+      foreach ($storage->loadMultiple($carousel_item_ids) as $carousel_item) {
+        $carousel_item->set('status', FALSE)->save();
+      }
+      break;
+
+    case 'user_cancel_reassign':
+      // Anonymize carousel entities.
+      $storage = \Drupal::entityTypeManager()->getStorage('carousel');
+      $carousel_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->accessCheck(FALSE)
+        ->execute();
+      /** @var Carousel */
+      foreach ($storage->loadMultiple($carousel_ids) as $carousel) {
+        $carousel->setOwnerId(0)->save();
+      }
+      // Anonymize carousel item entities.
+      $storage = \Drupal::entityTypeManager()->getStorage('carousel_item');
+      $carousel_item_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->accessCheck(FALSE)
+        ->execute();
+      /** @var Carousel */
+      foreach ($storage->loadMultiple($carousel_item_ids) as $carousel_item) {
+        $carousel_item->setOwnerId(0)->save();
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ */
+function easy_carousel_user_predelete(UserInterface $account): void {
+  // Delete carousel entities that belong to this account.
+  $storage = \Drupal::entityTypeManager()->getStorage('carousel');
+  if ($storage instanceof \Drupal\Core\Entity\RevisionableStorageInterface) {
+    $carousel_ids = $storage->getQuery()
+      ->condition('uid', $account->id())
+      ->accessCheck(FALSE)
+      ->execute();
+    $storage->delete(
+      $storage->loadMultiple($carousel_ids)
+    );
+
+    // Delete old revisions.
+    $carousel_ids = $storage->getQuery()
+      ->allRevisions()
+      ->condition('uid', $account->id())
+      ->accessCheck(FALSE)
+      ->execute();
+    foreach (array_keys($carousel_ids) as $revision_id) {
+      $storage->deleteRevision($revision_id);
+    }
+  }
+
+  // Delete carousel item entities that belong to this account.
+  $storage = \Drupal::entityTypeManager()->getStorage('carousel_item');
+  if ($storage instanceof \Drupal\Core\Entity\RevisionableStorageInterface) {
+    $carousel_item_ids = $storage->getQuery()
+      ->condition('uid', $account->id())
+      ->accessCheck(FALSE)
+      ->execute();
+    $storage->delete(
+      $storage->loadMultiple($carousel_item_ids)
+    );
+    // Delete old revisions.
+    $carousel_item_ids = $storage->getQuery()
+      ->allRevisions()
+      ->condition('uid', $account->id())
+      ->accessCheck(FALSE)
+      ->execute();
+    foreach (array_keys($carousel_item_ids) as $revision_id) {
+      $storage->deleteRevision($revision_id);
+    }
+  }
+}

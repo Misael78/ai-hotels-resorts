@@ -1,0 +1,16 @@
+services:
+
+  registration_confirmation.event_subscriber:
+    class: \Drupal\registration_confirmation\EventSubscriber\RegistrationEventSubscriber
+    arguments: [
+      '@plugin.manager.action',
+      '@registration_confirmation.logger',
+    ]
+    tags:
+      - { name: event_subscriber }
+
+  registration_confirmation.logger:
+    parent: logger.channel_base
+    arguments: [
+      'registration_confirmation',
+    ]

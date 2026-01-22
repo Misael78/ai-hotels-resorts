@@ -1,0 +1,5 @@
+services:
+  registration_test_open_close.event_subscriber:
+    class: \Drupal\registration_test_open_close\EventSubscriber\RegistrationSettingsEventSubscriber
+    tags:
+      - { name: event_subscriber }

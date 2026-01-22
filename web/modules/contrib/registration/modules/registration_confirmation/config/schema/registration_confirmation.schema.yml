@@ -1,0 +1,15 @@
+# Schema for the configuration files of the Registration Confirmation module.
+
+registration.type.*.third_party.registration_confirmation:
+  type: mapping
+  label: 'Confirmation email settings'
+  mapping:
+    enable:
+      label: 'Enable confirmation email'
+      type: boolean
+    subject:
+      label: 'Confirmation email subject'
+      type: label
+    message:
+      label: 'Confirmation email message'
+      type: text_format

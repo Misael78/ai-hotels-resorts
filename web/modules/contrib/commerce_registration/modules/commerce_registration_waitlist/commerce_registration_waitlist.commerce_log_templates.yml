@@ -1,0 +1,29 @@
+mail_space_available:
+  category: commerce_registration
+  label: 'Space available email'
+  template: '<p>Space available email sent to {{ to_email }}.</p>'
+
+order_cloned:
+  category: commerce_registration
+  label: 'Order cloned'
+  template: '<p><em>Draft</em> order cloned from <em>Completed</em> order {{ old_order }}.</p>'
+
+registration_autofill_started:
+  category: commerce_registration
+  label: 'Registration autofill process started'
+  template: '<p>Registration autofill process started because space became available.</p>'
+
+registration_autofill_completed:
+  category: commerce_registration
+  label: 'Registration autofill process completed'
+  template: '<p>Registration autofill process completed.</p>'
+
+registration_moved_from:
+  category: commerce_registration
+  label: 'Registration moved'
+  template: '<p>Registration {{ registration }} moved from order {{ old_order }}.</p>'
+
+registration_moved_to:
+  category: commerce_registration
+  label: 'Registration moved'
+  template: '<p>Registration {{ registration }} moved to order {{ new_order }} during autofill processing.</p>'

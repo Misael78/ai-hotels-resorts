@@ -1,0 +1,28 @@
+# Spanish translation of Search Kint (2.0.0-beta2)
+# Copyright (c) 2025 by the Spanish translation team
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Search Kint (2.0.0-beta2)\n"
+"POT-Creation-Date: 2025-07-07 19:46+0000\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+msgid "Submit"
+msgstr "Enviar"
+msgid "Development"
+msgstr "Desarrollo"
+msgid "Search all"
+msgstr "Buscar todos"
+msgid "Empty query"
+msgstr "Consulta vacía"
+msgid "Found 1 element"
+msgid_plural "Found @count elements"
+msgstr[0] "Encontrado 1 elemento"
+msgstr[1] "Encontrados @count elementos"
+msgid "Get path"
+msgstr "Obtener ruta"

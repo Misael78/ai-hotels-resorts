@@ -1,0 +1,13 @@
+name: 'Easy Carousel'
+type: module
+description: 'Add carousel to your Drupal in a easy way!'
+package: Custom
+core_version_requirement: ^11
+dependencies:
+  - drupal:field
+  - drupal:media
+
+# Information added by Drupal.org packaging script on 2025-05-04
+version: '2.0.0'
+project: 'easy_carousel'
+datestamp: 1746379198

@@ -1,0 +1,4 @@
+services:
+  elevenlabs.api:
+    class: Drupal\elevenlabs\ElevenLabsApiService
+    arguments: [ '@config.factory', '@http_client', '@key.repository', '@cache.default', '@logger.factory' ]

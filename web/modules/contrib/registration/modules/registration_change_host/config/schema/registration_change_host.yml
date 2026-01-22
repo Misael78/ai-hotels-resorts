@@ -1,0 +1,30 @@
+# Schema for the configuration files of the Registration Change Host module.
+
+registration.type.*.third_party.registration_change_host:
+  type: mapping
+  label: 'Change host settings'
+  mapping:
+    allow_data_loss:
+      label: 'Allow data loss when changing to a host of a different type'
+      type: boolean
+      default: false
+
+registration_change_host.settings:
+  type: config_object
+  label: 'Registration change host settings'
+  mapping:
+    task_title:
+      type: string
+      label: 'Local task title'
+    form_title:
+      type: string
+      label: 'Single step form title'
+    page_title:
+      type: string
+      label: 'Multistep page title'
+    confirm_form_title:
+      type: string
+      label: 'Multistep confirmation form title'
+    workflow:
+      type: string
+      label: 'Workflow'

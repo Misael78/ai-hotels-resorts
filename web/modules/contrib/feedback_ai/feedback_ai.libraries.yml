@@ -1,0 +1,19 @@
+feedback_ai_css:
+  version: VERSION
+  css:
+    theme:
+      css/feedback_ai.css: {}
+
+feedback_ai_canvas:
+  version: 1.x
+  js:
+    http://canvasjs.com/assets/script/canvasjs.min.js: { type: external, minified: true }
+
+feedback_ai_charts:
+  version: 2.x
+  js:
+    js/feedback_ai.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once

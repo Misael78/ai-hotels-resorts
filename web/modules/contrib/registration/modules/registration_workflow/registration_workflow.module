@@ -1,0 +1,152 @@
+<?php
+
+/**
+ * @file
+ * Provides permissions and operations for workflow transitions.
+ */
+
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\registration\Entity\RegistrationInterface;
+use Drupal\workflows\WorkflowInterface;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function registration_workflow_entity_operation(EntityInterface $entity): array {
+  $operations = [];
+
+  // Add a cancel operation for registrations. The route has a custom access
+  // checker that will ensure the operation is only displayed if the user has
+  // permission to cancel registrations and the registration is not already
+  // canceled.
+  if ($entity instanceof RegistrationInterface) {
+    $url = Url::fromRoute('registration_workflow.transition', [
+      'registration' => $entity->id(),
+      'transition' => 'cancel',
+    ]);
+    if ($url->access()) {
+      $operations['cancel'] = [
+        'title' => t('Cancel'),
+        'url' => $url->mergeOptions([
+          'query' => \Drupal::destination()->getAsArray(),
+        ]),
+        'weight' => 10,
+      ];
+    }
+  }
+
+  return $operations;
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function registration_workflow_entity_update(EntityInterface $entity) {
+  // Flush the render cache when workflows are updated, as the list of
+  // available registration entity operations could change.
+  if ($entity instanceof WorkflowInterface) {
+    $bins = Cache::getBins();
+    $bins['render']->deleteAll();
+  }
+}
+
+/**
+ * Prepares variables for a registration.
+ *
+ * Default template: registration.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing rendered fields.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function registration_workflow_preprocess_registration(array &$variables) {
+  // Add operations buttons when the registration is displayed on its own page.
+  if ($variables['elements']['#view_mode'] == 'full') {
+    /** @var Drupal\registration\Entity\RegistrationInterface $registration */
+    $registration = $variables['elements']['#registration'];
+    $transitions = \Drupal::service('registration_workflow.validation')->getValidTransitions($registration);
+
+    // Render a button for each transition. Exclude cancel since it is already
+    // rendered as an entity operation in registration listings.
+    unset($transitions['cancel']);
+    foreach ($transitions as $transition) {
+      $url = Url::fromRoute('registration_workflow.transition', [
+        'registration' => $registration->id(),
+        'transition' => $transition->id(),
+      ]);
+      // Ensure the user has access to perform the transition.
+      if ($url->access()) {
+        $url->mergeOptions([
+          'query' => \Drupal::destination()->getAsArray(),
+        ]);
+        // Append to the bottom of the registration template.
+        if (empty($variables['registration']['transition'])) {
+          $variables['registration']['transition'] = [
+            '#prefix' => '<p>',
+            '#type' => 'container',
+            '#weight' => 50,
+            // Rebuild if user permissions change.
+            '#cache' => [
+              'contexts' => [
+                'user.permissions',
+              ],
+            ],
+          ];
+        }
+        $variables['registration']['transition'][$transition->id()] = [
+          '#type' => 'link',
+          '#url' => $url,
+          '#title' => t('@transition registration', [
+            '@transition' => $transition->label(),
+          ]),
+          '#attributes' => [
+            'class' => [
+              'button',
+              'button--registration-transition',
+              'button--registration-transition--' . $transition->id(),
+            ],
+          ],
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function registration_workflow_form_registration_admin_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('registration_workflow.settings');
+  $form['registration_workflow'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Registration workflow'),
+  ];
+  $form['registration_workflow']['require_update_access'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Require update access to registrations'),
+    '#default_value' => $config->get('require_update_access') ?? FALSE,
+    '#description' => t('Requires that users have update access to the registration, plus the relevant workflow transition permission, to access a transition for a given registration. If this option is not set, only the workflow transition permission is needed.'),
+  ];
+  $form['registration_workflow']['prevent_complete_own'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Prevent users from completing their own registrations'),
+    '#default_value' => $config->get('prevent_complete_own') ?? FALSE,
+    '#description' => t('Prevents workflow completion if the current user is also the registrant. This setting is ignored for administrators.'),
+  ];
+  $form['#submit'][] = 'registration_workflow_form_registration_admin_settings_submit';
+}
+
+/**
+ * Implements submit handler for hook_form_FORM_ID_alter().
+ */
+function registration_workflow_form_registration_admin_settings_submit(&$form, FormStateInterface $form_state) {
+  $config = \Drupal::service('config.factory')->getEditable('registration_workflow.settings');
+  $config
+    ->set('require_update_access', $form_state->getValue('require_update_access'))
+    ->set('prevent_complete_own', $form_state->getValue('prevent_complete_own'))
+    ->save();
+}

@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * Contains registration_change_host_single_operation.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function registration_change_host_single_operation_local_tasks_alter(&$local_tasks) {
+  // Remove the change host tab.
+  if (isset($local_tasks['entity.registration.change_host'])) {
+    unset($local_tasks['entity.registration.change_host']);
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function registration_change_host_single_operation_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+  // Modify the edit tab to cover both steps of the change host
+  // & edit procedure.
+  if (isset($data['tabs'][0]['entity.registration.edit_form'])) {
+    $data['tabs'][0]['entity.registration.edit_form']['#active'] = in_array($route_name, [
+      'entity.registration.edit_form',
+      'entity.registration.edit_fields_form',
+    ]);
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function registration_change_host_single_operation_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Remove the change host operation.
+  if (isset($operations['change_host'])) {
+    unset($operations['change_host']);
+  }
+}

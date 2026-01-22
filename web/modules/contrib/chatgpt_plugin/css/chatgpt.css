@@ -1,0 +1,7 @@
+.ckeditor5-toolbar-button-alignment {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
+  background-position-x: 10px;
+}

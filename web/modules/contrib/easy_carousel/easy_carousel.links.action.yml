@@ -1,0 +1,11 @@
+carousel.add_form:
+  title: 'Add carousel'
+  route_name: entity.carousel.add_form
+  appears_on:
+    - entity.carousel.collection
+
+carousel_item.add_form:
+  title: 'Add carousel item'
+  route_name: entity.carousel_item.add_form
+  appears_on:
+    - entity.carousel_item.collection

@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Uninstall and create table functions for the feedback_ai module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function feedback_ai_uninstall() {
+  // Drop the feedback_ai table when the module is uninstalled.
+  $schema = \Drupal::database()->schema();
+  $schema->dropTable('feedback_ai');
+}
+
+/**
+ * {@inheritdoc}
+ */
+function feedback_ai_schema() {
+  $schema['feedback_ai'] = [
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique feedback ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'The user ID of the user who provided the feedback.',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Name of the user giving feedback.',
+      ],
+      'email' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Email of the user giving feedback.',
+      ],
+      'sentiment_text' => [
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'The feedback provided by the user',
+      ],
+      'sentiment_result' => [
+        'description' => 'The result of the sentiment analysis.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'description' => 'The Unix timestamp when the feedback was submitted.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'uid' => ['uid'],
+    ],
+  ];
+  return $schema;
+}

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - registration
+id: registration.summary
+label: Summary
+targetEntityType: registration
+cache: true

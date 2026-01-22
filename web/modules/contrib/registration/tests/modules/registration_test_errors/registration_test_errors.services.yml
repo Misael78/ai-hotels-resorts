@@ -1,0 +1,5 @@
+services:
+  registration_test_errors.data_alter_event_subscriber:
+    class: \Drupal\registration_test_errors\EventSubscriber\RegistrationDataAlterEventSubscriber
+    tags:
+      - { name: event_subscriber }

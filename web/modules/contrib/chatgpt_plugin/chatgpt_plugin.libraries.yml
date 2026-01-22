@@ -1,0 +1,10 @@
+chatgpt_assets:
+  version: 2.x
+  js:
+    js/chatgpt_plugin.js: {scope: footer}
+  dependencies:
+    - core/ckeditor
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/once

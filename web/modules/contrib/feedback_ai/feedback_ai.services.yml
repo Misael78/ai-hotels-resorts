@@ -1,0 +1,4 @@
+services:
+  feedback_ai.openai_client:
+    class: Drupal\feedback_ai\FeedbackOpenAIClient
+    arguments: ['@config.factory', '@logger.factory']

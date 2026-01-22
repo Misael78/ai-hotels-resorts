@@ -1,0 +1,19 @@
+commerce_registration.manage_registrations:
+  route_name: entity.commerce_product.commerce_registration.manage_registrations
+  base_route: entity.commerce_product.canonical
+  title: Manage Registrations
+  weight: 50
+commerce_registration.manage_registrations_sub:
+  route_name: entity.commerce_product.commerce_registration.manage_registrations
+  title: Registrations
+  parent_id: commerce_registration.manage_registrations
+commerce_registration.registration_settings:
+  route_name: entity.commerce_product.commerce_registration.registration_settings
+  title: Settings
+  parent_id: commerce_registration.manage_registrations
+  weight: 10
+commerce_registration.broadcast:
+  route_name: entity.commerce_product.commerce_registration.broadcast
+  title: Email Registrants
+  parent_id: commerce_registration.manage_registrations
+  weight: 20

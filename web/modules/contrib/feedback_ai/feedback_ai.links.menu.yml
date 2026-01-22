@@ -1,0 +1,17 @@
+feedback_ai.feedback_admin_config_openai:
+  title: 'Feedback OpenAI'
+  parent: system.admin_config
+  route_name: feedback_ai.feedback_admin_config_openai
+
+feedback_ai.feedback_api_settings:
+  title: Api Settings
+  description: Feedback Manage OpenAI settings, API keys, and org ID.
+  parent: feedback_ai.feedback_admin_config_openai
+  route_name: feedback_ai.feedback_api_settings
+  weight: -90
+
+feedback_ai.sentiment_feedback_ai:
+  title: Feedback AI Form
+  parent: system.admin_content
+  route_name: feedback_ai.content
+  weight: 10

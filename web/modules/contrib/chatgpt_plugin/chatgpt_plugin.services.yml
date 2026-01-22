@@ -1,0 +1,11 @@
+services:
+  chatgpt_plugin.subscriber:
+    class: Drupal\chatgpt_plugin\Routing\ChatgptContentRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  chatgpt_plugin.gpt_api:
+    class: Drupal\chatgpt_plugin\GPTApiService
+    arguments: ['@http_client', '@config.factory']
+  chatgpt_plugin.dalle_api:
+    class: Drupal\chatgpt_plugin\DallEApiService
+    arguments: ['@http_client', '@config.factory']

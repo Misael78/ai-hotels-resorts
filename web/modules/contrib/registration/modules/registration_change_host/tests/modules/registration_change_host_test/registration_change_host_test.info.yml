@@ -1,0 +1,11 @@
+name: Registration Change Host Test
+type: module
+description: 'Test module for Registration Change Host.'
+package: Testing
+dependencies:
+  - registration:registration_change_host
+
+# Information added by Drupal.org packaging script on 2025-07-26
+version: '3.4.4'
+project: 'registration'
+datestamp: 1753536113

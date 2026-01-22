@@ -1,0 +1,4 @@
+services:
+  chatgpt_integration.client:
+    class: Drupal\chatgpt_integration\ChatGPTClient
+    arguments: ['@http_client', '@key.repository']

@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ *
+ * Default registration template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - registration: The rendered registration fields.
+ *   Use 'registration' to print them all, or print a subset such as
+ *   'registration.title'. Use the following code to exclude the
+ *   printing of a given field:
+ *   @code
+ *   {{ registration|without('title') }}
+ *   @endcode
+ * - registration_entity: The registration entity.
+ *
+ * @ingroup themeable
+ */
+#}
+{% set classes = ['registration', 'registration--state-' ~ registration_entity.getState.id ] %}
+{{ attach_library('registration/view') }}
+<article{{ attributes.addClass(classes) }}>
+  {{- registration -}}
+</article>

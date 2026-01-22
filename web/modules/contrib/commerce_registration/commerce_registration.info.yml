@@ -1,0 +1,18 @@
+name: Commerce Registration
+type: module
+description: 'Provides registration integration for Drupal Commerce.'
+package: 'Commerce (contrib)'
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - commerce:commerce
+  - commerce:commerce_cart
+  - commerce:commerce_checkout
+  - commerce:commerce_order
+  - commerce:commerce_price
+  - commerce:commerce_product
+  - registration:registration
+
+# Information added by Drupal.org packaging script on 2025-03-30
+version: '3.4.0'
+project: 'commerce_registration'
+datestamp: 1743342963

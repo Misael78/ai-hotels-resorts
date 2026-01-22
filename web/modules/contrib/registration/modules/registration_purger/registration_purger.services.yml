@@ -1,0 +1,7 @@
+services:
+  logger.channel.registration_purger:
+    parent: logger.channel_base
+    arguments: ['registration_purger']
+  registration_purger.purger:
+    class: Drupal\registration_purger\RegistrationPurger
+    arguments: ['@entity_type.manager', '@logger.channel.registration_purger', '@registration.manager']

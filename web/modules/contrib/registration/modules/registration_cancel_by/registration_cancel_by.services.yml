@@ -1,0 +1,14 @@
+services:
+
+  registration_cancel_by.cancel_by_access_checker:
+    class: Drupal\registration_cancel_by\Access\CancelByAccessCheck
+    arguments: [
+      '@datetime.time',
+    ]
+    tags:
+      - { name: access_check, applies_to: _cancel_by_access_check }
+
+  registration_cancel_by.route_subscriber:
+    class: Drupal\registration_cancel_by\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

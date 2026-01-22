@@ -1,0 +1,5 @@
+commerce_price_calculated_waitlist:
+  version: VERSION
+  css:
+    theme:
+      css/commerce_price_calculated_waitlist.css: {}

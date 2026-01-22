@@ -1,0 +1,7 @@
+imagestyles.imagestyles_settings:
+  title: 'Image Styles Display'
+  route_name: imagestyles.imagestyles_settings
+  description: 'Configure image styles display settings'
+  parent: entity.image_style.collection
+  weight: 99
+

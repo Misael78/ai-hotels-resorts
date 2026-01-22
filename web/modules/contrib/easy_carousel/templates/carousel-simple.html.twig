@@ -1,0 +1,104 @@
+{#
+/**
+ * @file
+ * This template is used to render a default carousel entity,
+ *
+ * Available variables:
+ * - carousel: carousel entity.
+ * - slides: A list of carousel items.
+ * - configuration: The configuration block
+ * - data: An array of carousel values.
+ *
+ * @see Drupal\easy_carousel\Plugin\Block\SimpleCarouselBlock class.
+ */
+#}
+
+{% if data.status %}
+
+	<div
+		class="easy-carousel--simple"
+		data-id="{{ data.cid }}"
+		data-last_updated="{{ data.config.last_updated }}">
+
+		<ul class="list">
+			{% for slide in data.items %}
+
+				{% if slide.status %}
+					<li class="item slide" style="background-color: {{ slide.background_color }};">
+
+						{% if slide.media %}
+							{% if slide.media.bundle == 'image' %}
+								<div class="slide-image managed">
+									<img src="{{ file_url(slide.media.uri) }}" alt="{{ slide.media.alt }}" />
+								</div>
+							{% elseif slide.media.bundle == 'video' %}
+								<video controls>
+									<source src="{{ file_url(slide.media.uri) }}" type="{{ slide.media.mime_type }}">
+								</video>
+							{% elseif slide.media.bundle == 'remote_video' %}
+								<iframe
+									src="{{ embed_url(slide.media.uri, slide.video_options) }}"
+									class="easy-carousel-remote-video"
+									sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"></iframe>
+							{% endif %}
+						{% endif %}
+
+						{% if slide.base64_image %}
+							<div class="slide-image b64">
+								<img src="{{ slide.base64_image }}" />
+							</div>
+						{% endif %}
+
+						{% if slide.external_image %}
+							<div class="slide-image external">
+								<img src="{{ slide.external_image.uri }}" title="{{ slide.external_image.title }}" />
+							</div>
+						{% endif %}
+
+						<div class="slide-content text-align-{{ slide.text_alignment }} text-position-{{ slide.text_position }}" style="background-color: {{ slide.background_color }};">
+							{% if slide.show_title %}
+								<h2 class="slide-title" style="color: {{ slide.title_color }}">{{ slide.label }}</h2>
+							{% endif %}
+							<div class="slide-text" style="color: {{ slide.description_color }}">{{ slide.description|raw }}</div>
+							{% if slide.link %}
+								<div>
+									<a
+										class="slide-link"
+										href="{{ slide.link.uri }}"
+										target="{{ slide.link.target }}"
+										style="background-color: {{ slide.title_color }}; color: {{ slide.background_color }}"
+										title="{{ slide.link.title }}">
+										{{ slide.link.title }}
+									</a>
+								</div>
+							{% endif %}
+						</div>
+					</li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+
+		{% if data.config.show_indicators %}
+			<div class="indicators">
+				{% for slide in data.items %}
+					{% if slide.status %}
+						<span class="indicator {{ loop.first ? 'active' : '' }}" data-slide="{{ loop.index0 }}"></span>
+					{% endif %}
+				{% endfor %}
+			</div>
+		{% endif %}
+
+		{% if data.config.show_controls %}
+			<button class="carousel-control prev">
+				<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="40" height="50" fill="#ffffff">
+					<path d="M15.41 7.41L10.83 12l4.58 4.59L14 18l-6-6 6-6 1.41 1.41z"/>
+				</svg>
+			</button>
+			<button class="carousel-control next">
+				<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="40" height="50" fill="#ffffff">
+					<path d="M8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6-6-6-1.41 1.41z"/>
+				</svg>
+			</button>
+	{% endif %}
+	</div>
+{% endif %}

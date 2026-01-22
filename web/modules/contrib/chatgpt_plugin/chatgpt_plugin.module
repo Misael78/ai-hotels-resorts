@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Module to integrate ChatGPT with Drupal.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\NodeForm;
+
+/**
+ * Implements hook_help() for module help info.
+ */
+function chatgpt_plugin_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.chatgpt_plugin':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module will integrate OpenAI ChatGPT with our Drupal system. It will add a link on the content add and edit page. On clicking this link, it will open a popup which will provide access to the ChatGPT content search. Content creators can copy the article from the popup and can create a new content with it.');
+      $output .= ' ' . t('For more information, see the <a href=":drupal-org-help">online documentation for the ChatGPT Content Generator module</a>.', [':drupal-org-help' => 'https://www.drupal.org/project/chatgpt_plugin']);
+      $output .= '</p>';
+      return $output;
+  }
+
+}
+
+/**
+ * Implements hook_page_attachments() for attaching the JS file.
+ */
+function chatgpt_plugin_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'chatgpt_plugin/chatgpt_assets';
+}
+
+/**
+ * Implements hook_form_alter() for node form alter.
+ */
+function chatgpt_plugin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Only add the prefix if the user has the permission to access the form.
+  if (!\Drupal::currentUser()->hasPermission('access chatgpt search form')) {
+    return;
+  }
+
+  $config = \Drupal::config('chatgpt_plugin.adminsettings');
+  $content_types = $config->get('content_types');
+  $form_object = $form_state->getFormObject();
+  $isNodeForm = $form_object instanceof NodeForm;
+  $entity_type_id = 'node';
+  if ($isNodeForm) {
+    $bundle = $form_object->getEntity()->bundle();
+  }
+  if ($isNodeForm && is_array($content_types) && in_array($bundle, $content_types)) {
+    $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $bundle);
+    foreach ($field_definitions as $field_name => $field_definition) {
+      $type = $field_definition->getType();
+      $allowed_type = ['text', 'text_long', 'text_with_summary'];
+
+      if (in_array($type, $allowed_type)) {
+        $href_url = "/chatgpt/search_form/$field_name";
+        $form[$field_name]['#prefix'] = '<a class="use-ajax" href="' . $href_url . '" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:600}">ChatGPT Content Generator</a>';
+      }
+    }
+
+  }
+}

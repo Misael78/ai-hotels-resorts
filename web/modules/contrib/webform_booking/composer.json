@@ -1,0 +1,22 @@
+{
+  "name": "drupal/webform_booking",
+  "description": "Displays an entity selected in a webform element.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "homepage": "http://drupal.org/project/webform_booking",
+  "authors": [
+    {
+      "name": "Ricardo Marcelino",
+      "homepage": "https://www.drupal.org/u/rfmarcelino"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/webform_booking",
+    "source": "https://git.drupalcode.org/project/webform_booking"
+  },
+  "require": {
+    "drupal/webform": "^5.6 || ^6",
+    "drupal/core": "^9 || ^10" || "^11
+  },
+  "minimum-stability": "dev"
+}

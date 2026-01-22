@@ -1,0 +1,14 @@
+name: 'AI Audio Field'
+type: module
+description: Adds a more complex audio field that can be created from text-to-speech models.
+package: AI Tools
+core_version_requirement: ^10.2 || ^11
+
+dependencies:
+  - ai:ai
+  - drupal:file
+
+# Information added by Drupal.org packaging script on 2025-03-19
+version: '1.0.0-rc1'
+project: 'ai_audio_field'
+datestamp: 1742396560

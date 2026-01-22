@@ -1,0 +1,13 @@
+/**
+ * @file
+ * Styling for the calculated price of an item being added to a waiting list.
+ */
+
+.field--type-commerce-price .waitlist-regular-price {
+  text-decoration: line-through;
+}
+
+.field--type-commerce-price .waitlist-message {
+  font-size: 16px;
+  line-height: 20px;
+}

@@ -1,0 +1,12 @@
+# Schema for the configuration files of the Registration Workflow module.
+
+registration_workflow.settings:
+  type: config_object
+  label: 'Registration workflow settings'
+  mapping:
+    require_update_access:
+      type: boolean
+      label: 'Require update access to registrations'
+    prevent_complete_own:
+      type: boolean
+      label: 'Prevent completion of own registrations'

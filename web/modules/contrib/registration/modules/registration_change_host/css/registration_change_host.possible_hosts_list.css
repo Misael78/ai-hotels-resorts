@@ -1,0 +1,78 @@
+/**
+ * List (wrapper of possible host items).
+ */
+
+.registration-possible-hosts {
+  margin-top: 1em;
+  margin-bottom: 2em;
+  padding: 0;
+  border: 1px solid lightgray;
+  border-radius: 0.7em;
+}
+
+/**
+ * Possible host item.
+ */
+
+.registration-possible-host {
+  padding: 1.5em 1.5em 1.5em 3em;
+  opacity: 0.5;
+}
+
+[dir="rtl"] .registration-possible-host {
+  padding-right: 3em;
+  padding-left: 1.5em;
+}
+
+.registration-possible-host:not(:last-child) {
+  border-bottom: 0.0625em solid #d3d4d9;
+}
+
+.registration-possible-host.is-allowed {
+  opacity: 1;
+}
+
+.registration-possible-host.is-allowed .title {
+  font-weight: bold;
+}
+
+.registration-possible-host .link {
+  display: block;
+  text-decoration: none;
+}
+
+.registration-possible-host.is-current {
+  background-color: #f4f4f4;
+}
+
+.registration-possible-host.is-current .title {
+  font-style: italic;
+}
+
+.registration-possible-host.is-allowed:hover {
+  background-color: #c0c8cf;
+}
+
+.registration-possible-host:hover:first-child {
+  border-top-left-radius: 0.7em;
+  border-top-right-radius: 0.7em;
+}
+
+.registration-possible-host:hover:last-child {
+  border-bottom-left-radius: 0.7em;
+  border-bottom-right-radius: 0.7em;
+}
+
+.registration-possible-host .info {
+  margin: 0.5em 0 0.25em;
+  color: #55565b;
+}
+
+[dir="rtl"] .registration-possible-host .info {
+  margin-right: 0;
+}
+
+.registration-possible-host .info .causes,
+.registration-possible-host .info .description {
+  display: block;
+}

@@ -1,0 +1,19 @@
+{
+    "name": "drupal/chatgpt_plugin",
+    "description": "This module will integrate OpenAI ChatGPT with our Drupal system.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Anup Sinha (anupsinha)",
+            "homepage": "https://www.drupal.org/u/anupsinha",
+            "role": "Maintainer"
+        }
+    ],
+    "homepage": "https://www.drupal.org/project/chatgpt_plugin",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/chatgpt_plugin",
+        "source": "https://git.drupalcode.org/project/chatgpt_plugin"
+    },
+    "require": {}
+}

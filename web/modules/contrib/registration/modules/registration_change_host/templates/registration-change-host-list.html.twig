@@ -1,0 +1,62 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present a list of possible hosts.
+ *
+ * Available variables:
+ *   - set: A set of possible hosts, \Drupal\registration_change_host\PossibleHostSetInterface.
+ *   - hosts: An array of hosts, each with the following keys:
+ *     - possible_host: Possible host entity, \Drupal\registration_change_host\PossibleHostInterface.
+ *     - host_entity: Host entity, \Drupal\registration\HostEntityInterface.
+ *     - label: Host label.
+ *     - description: Host description.
+ *     - is_available: Whether this host is available to the current user.
+ *     - is_current: Whether this host is the registration's current host.
+ *     - causes: (optional) Causes of why the host is not allowed.
+ *     - url: (optional) Url to change registration to this host.
+ *     - link: (optional) A link to change registration to this host.
+ *
+ * @see template_preprocess_registration_change_host_list()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<dl class="registration-possible-hosts">
+  {% for host in hosts %}
+    {% set host_classes = (host.is_current ? ' is-current') ~ (host.is_available ? ' is-allowed') %}
+    <div class="registration-possible-host{{ host_classes }}">
+      {% block host %}
+        {% if host.is_available and host.url %}
+          <a class="link" title="{{ host.label }}" href="{{ host.url }}">
+        {% endif %}
+        <dt class="title">
+          {% if host.is_available and host.link and not host.url %}
+            {{ host.link }}
+          {% else %}
+            {{ host.label }}
+          {% endif %}
+        </dt>
+        {% block host_info %}
+          {% if host.description or host.causes %}
+            <dd class="info">
+              {% if host.description %}
+                <span class="description">{{ host.description }}</span>
+              {% endif %}
+              {% if host.causes %}
+                <span class="causes">
+                {% for cause in host.causes %}
+                  <span class="cause">{{ cause }} </span>
+                {% endfor %}
+                </span>
+              {% endif %}
+            </dd>
+          {% endif %}
+        {% endblock %}
+        {% if host.is_available and host.url %}
+          </a>
+        {% endif %}
+      {% endblock %}
+    </div>
+  {% endfor %}
+</dl>

@@ -1,0 +1,31 @@
+access registration overview:
+  title: 'Access the registrations overview page'
+administer registration types:
+  title: 'Administer registration types'
+  description: 'Manage registration types, fields and display settings.'
+  restrict access: true
+administer registration:
+  title: 'Administer registrations'
+  description: 'View, edit, delete and manage all registrations and registration settings, regardless of type.'
+  restrict access: true
+create registration:
+  title: 'Create registrations'
+  description: 'Create registrations, regardless of type. Allows registering other user accounts, registering other people by email address, and self registration.'
+delete host registration:
+  title: 'Delete host registrations'
+  description: 'Delete registrations for host entities to which a user has edit access, regardless of type.'
+update host registration:
+  title: 'Update host registrations'
+  description: 'Update registrations for host entities to which a user has edit access, regardless of type.'
+view any registration:
+  title: 'View registrations'
+  description: 'View all registrations, regardless of type.'
+view host registration:
+  title: 'View host registrations'
+  description: 'View all registrations for host entities to which a user has edit access, regardless of type. See this <a href="https://www.drupal.org/node/3440834">change record</a> for information about this permission.'
+view own registration:
+  title: 'View own registrations'
+  description: 'View own registrations, regardless of type.'
+
+permission_callbacks:
+  - \Drupal\registration\RegistrationPermissionProvider::buildPermissions

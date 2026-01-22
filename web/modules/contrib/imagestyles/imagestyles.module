@@ -1,0 +1,275 @@
+<?php
+
+/**
+ * @file
+ * Contains imagestyles.module.
+ */
+
+use Drupal\Core\Link;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\image\Entity\ImageStyle;
+
+/**
+ * Implements hook_help().
+ */
+function imagestyles_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the imagestyles module.
+    case 'help.page.imagestyles':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides previews for image styles') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements template_preprocess_media().
+ */
+function imagestyles_preprocess_media(&$variables) {
+
+  // Are we on the media entity page? If not, do nothing.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name != 'entity.media.canonical') {
+    return;
+  }
+
+  // Is this actually an image entity? If not, do nothing.
+  $media_entity = $variables['elements']['#media'];
+  $source = $media_entity->getSource();
+  $id = $source->getPluginId();
+  if ($id != 'image') {
+    return;
+  }
+
+  $image_uri = imagestyles_get_image_uri($media_entity);
+
+  // Get all image styles in the site.
+  $styles = ImageStyle::loadMultiple();
+
+  $config = \Drupal::config('imagestyles.settings')->get('expanded_styles');
+  $header_items = [];
+
+  // Set up a render array with all derivative image styles.
+  foreach ($styles as $style_name => $style) {
+    if ($style_name != 'original') {
+      $style_open = !empty($config[$style_name]);
+      $header_items[] = imagestyles_header_item($style_name, $style->get('label'));
+      $variables['content']['imagestyles'][$style_name] = imagestyles_render_image_style($image_uri, $style, $style_open);
+    }
+  }
+
+  // Add the original image to our render array.
+  $header_items[] = imagestyles_header_item('original', 'Original image');
+  $style_id = imagestyles_style_id('original');
+  $original_open = !empty($config['original']);
+  $dimensions = $source->getMetadata($media_entity, 'width') . 'x' . $source->getMetadata($media_entity, 'height');
+  $image_details = [
+    '#markup' => $dimensions,
+  ];
+
+  $variables['content']['imagestyles']['original'] = imagestyles_render_array($image_uri, $style_id, 'Original', $original_open, $image_details);
+
+  // Remove the default copy of the original image.
+  $field_name = imagestyles_get_image_field_name($media_entity);
+  unset($variables['content'][$field_name]);
+
+  // Add a list of anchor links at the top.
+  $header = [
+    '#theme' => 'item_list',
+    '#title' => t('Image Styles'),
+    '#items' => $header_items,
+    '#weight' => -999,
+  ];
+  $variables['content']['imagestyles_header'] = $header;
+}
+
+/**
+ * Get the image field name from the media entity.
+ *
+ * @param \Drupal\media\Entity\Media $media_entity
+ *   The media entity.
+ *
+ * @return string
+ *   The name of the image field on that entity.
+ */
+function imagestyles_get_image_field_name($media_entity) {
+  $field_name = '';
+  $field_definitions = $media_entity->getFieldDefinitions();
+  foreach ($field_definitions as $field) {
+    // Is this an image field?
+    $field_type = $field->getType();
+    if ($field_type == 'image') {
+      $field_name = $field->getName();
+    }
+  }
+  return $field_name;
+}
+
+/**
+ * Get the image URI from the media entity.
+ *
+ * @param \Drupal\media\Entity\Media $media_entity
+ *   The media entity.
+ *
+ * @return string
+ *   The image URI.
+ *
+ * @throws \Drupal\Core\TypedData\Exception\MissingDataException
+ */
+function imagestyles_get_image_uri($media_entity) {
+  $file_entity = imagestyles_get_file_entity($media_entity);
+  return $file_entity->get('uri')->getString();
+}
+
+/**
+ * Get the image file entity attached to the media entity.
+ *
+ * @param \Drupal\media\Entity\Media $media_entity
+ *   The media entity.
+ *
+ * @return \Drupal\media\Plugin\media\Source\Image
+ *   The file entity for the image field.
+ *
+ * @throws \Drupal\Core\TypedData\Exception\MissingDataException
+ */
+function imagestyles_get_file_entity($media_entity) {
+  $field_name = imagestyles_get_image_field_name($media_entity);
+  $img_entity_list = $media_entity->get($field_name);
+  $img_entity = $img_entity_list->first();
+  $file_entity = $img_entity->get('entity')->getTarget();
+  return $file_entity;
+}
+
+/**
+ * Prepare a render array for an image style preview.
+ *
+ * @param string $image_uri
+ *   The original image URI.
+ * @param \Drupal\image\Entity\ImageStyle $style
+ *   The image style entity.
+ * @param bool $open
+ *   TRUE if the preview should be open by default.
+ *
+ * @return array
+ *   The render array of the preview.
+ */
+function imagestyles_render_image_style($image_uri, $style, $open) {
+  $style_name = $style->getName();
+  $style_label = $style->get('label');
+
+  $style_id = imagestyles_style_id($style_name);
+
+  $effects = $style->getEffects();
+  $effect_labels = [];
+  foreach ($effects as $effect) {
+    $label = $effect->label();
+    $summary = $effect->getSummary();
+    $effect_labels[] = [
+      '#type' => 'container',
+      'content' => [
+        [
+          '#markup' => $label . ' ',
+        ],
+        $summary,
+      ],
+    ];
+  }
+
+  return imagestyles_render_array($image_uri, $style_id, $style_label, $open,
+    $effect_labels, $style_name);
+}
+
+/**
+ * Prepare a render array for an image.
+ *
+ * @param string $image_uri
+ *   The original image URI.
+ * @param string $style_id
+ *   An identifier for the element.
+ * @param string $label
+ *   The human-readable name of the image style.
+ * @param bool $open
+ *   TRUE if the preview should be open by default.
+ *
+ * @param array $effect_labels
+ *   Render array containing labels for any image effects
+ *
+ * @param string $style_name
+ *   The human-readable name of the image style.
+ *
+ * @return array
+ *   The render array.
+ */
+function imagestyles_render_array(
+  $image_uri,
+  $style_id,
+  $label,
+  $open = TRUE,
+  $effect_labels = [],
+  $style_name = ''
+) {
+
+  $image = [
+    '#theme' => 'image',
+    '#uri' => $image_uri,
+  ];
+
+  if (!empty($style_name)) {
+    $image = [
+      '#theme' => 'image_style',
+      '#style_name' => $style_name,
+      '#uri' => $image_uri,
+    ];
+  }
+
+  return [
+    '#type' => 'details',
+    '#open' => $open,
+    '#title' => $label,
+    '#attributes' => [
+      'class' => [
+        'imagestyles-container',
+      ],
+      'id' => $style_id,
+    ],
+    'description' => [
+      [
+        '#type' => 'container',
+        'content' => $effect_labels,
+      ],
+      $image,
+    ],
+  ];
+}
+
+/**
+ * Get the id for the preview.
+ *
+ * @param string $style_name
+ *   The image style name.
+ *
+ * @return string
+ *   An id to use for the preview.
+ */
+function imagestyles_style_id($style_name) {
+  return 'imagestyles-style-' . $style_name;
+}
+
+/**
+ * Get an anchor link to an image style preview.
+ *
+ * @param string $style_name
+ *   The image style name.
+ *
+ * @return \Drupal\Core\Link
+ *   A link to the preview anchor.
+ */
+function imagestyles_header_item($style_name, $style_label) {
+  $style_id = imagestyles_style_id($style_name);
+  $anchor = Url::fromUserInput('#' . $style_id);
+  return Link::fromTextAndUrl($style_label, $anchor);
+}

@@ -1,0 +1,6 @@
+services:
+  hotel_ai.generator:
+    class: Drupal\hotel_ai\Service\HotelAIGenerator
+    arguments:
+      - '@ai_provider_openai.helper'
+

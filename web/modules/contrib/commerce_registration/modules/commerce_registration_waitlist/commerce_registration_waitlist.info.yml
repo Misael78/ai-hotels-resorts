@@ -1,0 +1,13 @@
+name: Commerce Registration Wait List
+type: module
+description: 'Provides integration with the Registration Wait List module.'
+package: 'Commerce (contrib)'
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - commerce_registration:commerce_registration
+  - registration:registration_waitlist
+
+# Information added by Drupal.org packaging script on 2025-03-30
+version: '3.4.0'
+project: 'commerce_registration'
+datestamp: 1743342963

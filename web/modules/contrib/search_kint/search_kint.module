@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Adds JS and CSS for search kint functionality.
+ */
+
+/**
+ * Implements hook_page_attachments().
+ */
+function search_kint_page_attachments(array &$attachments) {
+  // @todo Figure out how to conditionally attach this only if Kint is invoked.
+  $attachments['#attached']['library'][] = 'search_kint/search_kint';
+}

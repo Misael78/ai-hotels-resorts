@@ -1,0 +1,133 @@
+# Schema for the views plugins of the Registration module.
+
+views.area.manage_registrations_caption:
+  type: views_area
+  label: 'Manage registrations caption'
+views.area.manage_registrations_empty:
+  type: views_area
+  label: 'Manage registrations empty message'
+
+views.argument.registration_host_entity_id:
+  type: views_argument
+  label: 'Host entity ID'
+views.argument.registration_host_entity_type_id:
+  type: views_argument
+  label: 'Host entity type ID'
+
+views.field.registration.boolean.states:
+  type: views_field
+  label: 'Boolean with registration states'
+  mapping:
+    type:
+      type: string
+      label: 'Output format'
+    type_custom_true:
+      type: label
+      label: 'Custom output for TRUE'
+    type_custom_false:
+      type: label
+      label: 'Custom output for FALSE'
+    not:
+      type: boolean
+      label: 'Reverse'
+    registration_states:
+      type: sequence
+      label: 'Registration states'
+      sequence:
+        type: string
+        label: 'State'
+    user_argument:
+      type: integer
+      label: 'Position of contextual filter with user ID'
+
+views.field.registration_host_entity:
+  type: views_field
+  label: 'Host entity'
+views.field.registration_settings_operations:
+  type: views_field
+  label: 'Registration settings operations'
+views.field.host_entity_registration_count:
+  type: views_field
+  label: 'Host entity registration count'
+views.field.host_entity_spaces_remaining:
+  type: views_field
+  label: 'Host entity spaces remaining'
+views.field.host_entity_spaces_reserved:
+  type: views_field
+  label: 'Host entity spaces reserved'
+views.field.host_entity_user_is_registered:
+  type: views.field.registration.boolean.states
+  label: 'User is registered for host entity'
+
+views.filter.registration.boolean.states:
+  type: views_filter
+  label: 'Boolean with registration states'
+  mapping:
+    accept_null:
+      type: boolean
+      label: 'Accept NULL'
+    registration_states:
+      type: sequence
+      label: 'Registration states'
+      sequence:
+        type: string
+        label: 'State'
+    user_argument:
+      type: integer
+      label: 'Position of contextual filter with user ID'
+
+views.filter.registration.numeric.states:
+  type: views_filter
+  label: 'Numeric with registration states'
+  mapping:
+    registration_states:
+      type: sequence
+      label: 'Registration states'
+      sequence:
+        type: string
+        label: 'State'
+    expose:
+      type: mapping
+      label: 'Exposed'
+      mapping:
+        min_placeholder:
+          type: label
+          label: 'Min placeholder'
+        max_placeholder:
+          type: label
+          label: 'Max placeholder'
+        placeholder:
+          type: label
+          label: 'Placeholder'
+
+views.filter.host_entity_registration_count:
+  type: views.filter.registration.numeric.states
+  label: 'Host entity registration count'
+views.filter_value.host_entity_registration_count:
+  type: views.filter_value.numeric
+  label: 'Host entity registration count'
+views.filter.host_entity_spaces_remaining:
+  type: views.filter.registration.numeric.states
+  label: 'Host entity spaces remaining'
+views.filter_value.host_entity_spaces_remaining:
+  type: views.filter_value.numeric
+  label: 'Host entity spaces remaining'
+views.filter.host_entity_spaces_reserved:
+  type: views.filter.registration.numeric.states
+  label: 'Host entity spaces reserved'
+views.filter_value.host_entity_spaces_reserved:
+  type: views.filter_value.numeric
+  label: 'Host entity spaces reserved'
+views.filter.host_entity_user_is_registered:
+  type: views.filter.registration.boolean.states
+  label: 'User is registered for host entity'
+views.filter_value.host_entity_user_is_registered:
+  type: views.filter_value.boolean
+  label: 'User is registered for host entity'
+
+views.relationship.registration:
+  type: views_relationship
+  label: 'Registration'
+views.relationship.registration_settings:
+  type: views_relationship
+  label: 'Registration settings'
