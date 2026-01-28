@@ -56,7 +56,7 @@ backend_config:
     jts: false
     solr_install_dir: ''
     username: solr
-    password: SolrRocks
+    password: "TEST_PASSWORD"
     checkpoints_collection: ''
     stats_cache: org.apache.solr.search.stats.LRUStatsCache
     distrib: true
