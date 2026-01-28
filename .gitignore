@@ -13,3 +13,6 @@ logs/
 .DS_Store
 *.bak
 *.log
+dubon
+dubon.pub
+
